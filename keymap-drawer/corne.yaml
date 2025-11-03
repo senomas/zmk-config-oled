@@ -24,9 +24,9 @@ layers:
   - K
   - L
   - ;
-  - ''''
+  - {t: '''', h: '$$mdi:apple-keyboard-control$$'}
   - $$mdi:apple-keyboard-shift$$
-  - Z
+  - {t: Z, h: LEFT ALT}
   - X
   - C
   - V
@@ -35,16 +35,16 @@ layers:
   - M
   - ','
   - .
-  - /
-  - {t: ESCAPE, h: AltGr+Esc}
+  - {t: /, h: RIGHT ALT}
+  - {t: ESCAPE, h: RIGHT SHIFT}
   - $$mdi:apple-keyboard-command$$
-  - LOW
+  - {t: ESCAPE, h: LOW}
   - ␣
   - ⏎
-  - RAI
-  - LOW
+  - {t: ␣, h: RAI}
+  - {t: ESCAPE, h: LOW}
   LOW:
-  - ↹
+  - {t: ▽, type: trans}
   - '1'
   - '2'
   - '3'
@@ -55,37 +55,37 @@ layers:
   - '8'
   - '9'
   - '0'
-  - $$mdi:backspace-outline$$
-  - BT CLR
-  - BT 1
-  - BT 2
-  - BT 3
-  - BT 4
-  - BT 5
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
   - ←
   - ↓
   - ↑
   - →
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
-  - $$mdi:apple-keyboard-shift$$
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
+  - Home
+  - PAGE DOWN
+  - Page Up
+  - End
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
   - $$mdi:apple-keyboard-command$$
   - {type: held}
   - ␣
   - ⏎
-  - {t: Mouse, h: toggle}
-  - $$mdi:apple-keyboard-option$$
+  - {t: EXT, h: toggle}
+  - {t: ▽, type: trans}
   RAI:
   - ↹
   - '!'
@@ -99,7 +99,7 @@ layers:
   - (
   - )
   - $$mdi:backspace-outline$$
-  - $$mdi:apple-keyboard-control$$
+  - {t: ▽, type: trans}
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
@@ -110,8 +110,8 @@ layers:
   - '['
   - ']'
   - \
-  - '`'
-  - $$mdi:apple-keyboard-shift$$
+  - {t: '`', h: '$$mdi:apple-keyboard-control$$'}
+  - {t: ▽, type: trans}
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
@@ -121,15 +121,15 @@ layers:
   - +
   - '{'
   - '}'
-  - '|'
-  - '~'
+  - {t: '|', h: RIGHT ALT}
+  - {t: '~', h: RIGHT SHIFT}
   - $$mdi:apple-keyboard-command$$
-  - {t: Mouse, h: toggle}
+  - {t: EXT, h: toggle}
   - ␣
   - ⏎
-  - {t: '&studio_unlock', type: held}
-  - $$mdi:apple-keyboard-option$$
-  Mouse:
+  - {type: held}
+  - {t: ▽, type: trans}
+  EXT:
   - BT CLR ALL
   - BT 1
   - BT 2

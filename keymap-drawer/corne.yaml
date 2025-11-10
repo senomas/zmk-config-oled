@@ -26,23 +26,23 @@ layers:
   - ;
   - {t: '''', h: '$$mdi:apple-keyboard-control$$'}
   - $$mdi:apple-keyboard-shift$$
-  - {t: Z, h: LEFT GUI}
-  - {t: X, h: '$$mdi:apple-keyboard-option$$'}
-  - $$mdi:apple-keyboard-control$$
+  - {t: Z, h: LEFT ALT}
+  - X
+  - C
   - V
   - B
   - N
   - M
   - ','
-  - {t: ., h: '$$mdi:apple-keyboard-option$$'}
-  - {t: /, h: '$$mdi:apple-keyboard-command$$'}
+  - .
+  - {t: /, h: '$$mdi:apple-keyboard-option$$'}
   - {t: ↹, h: RIGHT SHIFT}
-  - {t: '$$mdi:apple-keyboard-command$$', h: RAI}
+  - {t: Esc, h: '$$mdi:apple-keyboard-command$$'}
   - {t: ↹, h: RAI}
   - {t: ␣, h: LOW}
   - {t: ENTER, h: RAI}
   - {t: ␣, h: LOW}
-  - {t: ESCAPE, h: LOW}
+  - {t: ESCAPE, h: '$$mdi:apple-keyboard-command$$'}
   LOW:
   - {t: ▽, type: trans}
   - '1'
@@ -81,11 +81,11 @@ layers:
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ␣, type: held}
-  - ⏎
   - {t: EXT, h: toggle}
-  - $$mdi:apple-keyboard-command$$
+  - {type: held}
+  - {t: ⏎, h: EXT}
+  - {t: EXT, h: toggle}
+  - {t: ▽, type: trans}
   RAI:
   - ↹
   - '!'
@@ -123,10 +123,10 @@ layers:
   - '}'
   - {t: '|', h: RIGHT ALT}
   - {t: '~', h: RIGHT SHIFT}
-  - {t: '$$mdi:apple-keyboard-command$$', type: held}
+  - $$mdi:apple-keyboard-command$$
+  - {type: held}
+  - {t: ␣, h: EXT}
   - {t: EXT, h: toggle}
-  - ␣
-  - ⏎
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
   EXT:
@@ -168,7 +168,7 @@ layers:
   - {t: ▽, type: trans}
   - {t: BAS, h: toggle}
   - '&mkp MCLK'
-  - '&mkp RCLK'
-  - '&mkp LCLK'
+  - {t: '&mkp RCLK', type: held}
+  - {t: '&mkp LCLK', type: held}
   - '&mkp MCLK'
   - {t: BAS, h: toggle}

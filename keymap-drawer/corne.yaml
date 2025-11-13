@@ -84,7 +84,7 @@ layers:
   - {t: EXT, h: toggle}
   - {type: held}
   - {t: ⏎, h: EXT}
-  - {t: EXT, h: toggle}
+  - {t: ▽, type: trans}
   - {t: ▽, type: trans}
   RAI:
   - ↹
@@ -126,11 +126,11 @@ layers:
   - $$mdi:apple-keyboard-command$$
   - {type: held}
   - {t: ␣, h: EXT}
+  - {t: ▽, type: trans}
   - {t: EXT, h: toggle}
   - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
   EXT:
-  - BT CLR ALL
+  - {t: ▽, type: trans}
   - BT 1
   - BT 2
   - BT 3
@@ -154,7 +154,7 @@ layers:
   - '&mmv MOVE_RIGHT'
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
+  - BT CLR ALL
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
@@ -170,5 +170,5 @@ layers:
   - '&mkp MCLK'
   - {t: '&mkp RCLK', type: held}
   - {t: '&mkp LCLK', type: held}
-  - '&mkp MCLK'
+  - '&mkp RCLK'
   - {t: BAS, h: toggle}

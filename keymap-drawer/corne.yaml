@@ -81,7 +81,7 @@ layers:
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
-  - {t: EXT, h: toggle}
+  - {t: ↹, h: EXT}
   - {type: held}
   - {t: ⏎, h: EXT}
   - {t: ▽, type: trans}
@@ -136,12 +136,12 @@ layers:
   - BT 3
   - BT 4
   - BT 5
-  - {t: ▽, type: trans}
+  - ←
   - '&msc SCRL_DOWN'
   - '&msc SCRL_UP'
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
+  - →
+  - Alt+←
+  - Alt+→
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
@@ -165,10 +165,10 @@ layers:
   - PAGE DOWN
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
+  - Ctl+R
   - {t: BAS, h: toggle}
-  - '&mkp MCLK'
+  - {t: '&mkp MCLK', type: held}
   - {t: '&mkp RCLK', type: held}
-  - {t: '&mkp LCLK', type: held}
+  - '&mkp LCLK'
   - '&mkp RCLK'
   - {t: BAS, h: toggle}

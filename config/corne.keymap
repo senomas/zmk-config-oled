@@ -44,10 +44,10 @@
             //                    | GUI |     | SPC |   | ENT |     | ALT |
 
             bindings = <
-&trans  &kp N1  &kp N2  &kp N3  &kp N4  &kp N5    &kp N6     &kp N7         &kp N8     &kp N9     &kp N0  &trans
-&trans  &trans  &trans  &trans  &trans  &trans    &kp LEFT   &kp DOWN       &kp UP     &kp RIGHT  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans    &kp HOME   &kp PAGE_DOWN  &kp PG_UP  &kp END    &trans  &trans
-                        &trans  &to 3   &trans    &lt 3 RET  &trans         &trans
+&trans  &kp N1  &kp N2  &kp N3  &kp N4     &kp N5    &kp N6     &kp N7         &kp N8     &kp N9     &kp N0  &trans
+&trans  &trans  &trans  &trans  &trans     &trans    &kp LEFT   &kp DOWN       &kp UP     &kp RIGHT  &trans  &trans
+&trans  &trans  &trans  &trans  &trans     &trans    &kp HOME   &kp PAGE_DOWN  &kp PG_UP  &kp END    &trans  &trans
+                        &trans  &lt 3 TAB  &trans    &lt 3 RET  &trans         &trans
             >;
         };
 
@@ -70,9 +70,9 @@
 
         Extra {
             bindings = <
-&trans          &bt BT_SEL 0  &bt BT_SEL 1  &bt BT_SEL 2  &bt BT_SEL 3  &bt BT_SEL 4    &trans          &msc SCRL_DOWN  &msc SCRL_UP   &trans           &trans  &trans
-&trans          &trans        &trans        &trans        &trans        &trans          &mmv MOVE_LEFT  &mmv MOVE_DOWN  &mmv MOVE_UP   &mmv MOVE_RIGHT  &trans  &trans
-&bt BT_CLR_ALL  &trans        &trans        &trans        &trans        &trans          &trans          &kp PAGE_DOWN   &kp PAGE_DOWN  &trans           &trans  &trans
+&trans          &bt BT_SEL 0  &bt BT_SEL 1  &bt BT_SEL 2  &bt BT_SEL 3  &bt BT_SEL 4    &kp LEFT        &msc SCRL_DOWN  &msc SCRL_UP   &kp RIGHT        &kp LA(LEFT)  &kp LA(RIGHT)
+&trans          &trans        &trans        &trans        &trans        &trans          &mmv MOVE_LEFT  &mmv MOVE_DOWN  &mmv MOVE_UP   &mmv MOVE_RIGHT  &trans        &trans
+&bt BT_CLR_ALL  &trans        &trans        &trans        &trans        &trans          &trans          &kp PAGE_DOWN   &kp PAGE_DOWN  &trans           &trans        &kp LC(R)
                                             &to 0         &mkp MCLK     &mkp RCLK       &mkp LCLK       &mkp RCLK       &to 0
             >;
 

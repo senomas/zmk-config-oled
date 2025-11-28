@@ -70,10 +70,10 @@
 
         Extra {
             bindings = <
-&trans          &bt BT_SEL 0  &bt BT_SEL 1  &bt BT_SEL 2  &bt BT_SEL 3  &bt BT_SEL 4    &kp LEFT        &msc SCRL_DOWN  &msc SCRL_UP   &kp RIGHT        &kp LA(LEFT)  &kp LA(RIGHT)
-&trans          &trans        &trans        &trans        &trans        &trans          &mmv MOVE_LEFT  &mmv MOVE_DOWN  &mmv MOVE_UP   &mmv MOVE_RIGHT  &trans        &trans
-&bt BT_CLR_ALL  &trans        &trans        &trans        &trans        &trans          &trans          &kp PAGE_DOWN   &kp PAGE_DOWN  &trans           &trans        &kp LC(R)
-                                            &to 0         &mkp MCLK     &mkp RCLK       &mkp LCLK       &mkp RCLK       &to 0
+&trans  &bt BT_SEL 0  &bt BT_SEL 1  &bt BT_SEL 2  &bt BT_SEL 3  &bt BT_SEL 4    &kp LEFT        &msc SCRL_DOWN  &msc SCRL_UP   &kp RIGHT        &kp LA(LEFT)  &kp LA(RIGHT)
+&trans  &trans        &trans        &trans        &trans        &trans          &mmv MOVE_LEFT  &mmv MOVE_DOWN  &mmv MOVE_UP   &mmv MOVE_RIGHT  &kp LA(HOME)  &kp LC(R)
+&trans  &trans        &trans        &trans        &trans        &bt BT_CLR      &trans          &kp PAGE_DOWN   &kp PAGE_DOWN  &trans           &trans        &trans
+                                    &to 0         &mkp MCLK     &mkp RCLK       &mkp LCLK       &mkp RCLK       &to 0
             >;
 
             label = "EXT";

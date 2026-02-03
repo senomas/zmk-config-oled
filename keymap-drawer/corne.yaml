@@ -154,7 +154,7 @@ layers:
   - '&mmv MOVE_RIGHT'
   - Alt+Home
   - Ctl+R
-  - {t: ▽, type: trans}
+  - '&soft_off'
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}

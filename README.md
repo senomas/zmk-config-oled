@@ -56,7 +56,7 @@ a modification to your keymap, you can do it with the online [keymap-editor](htt
 ## keymap lily58
 ![keymap-drawer-demo-lily58](keymap-drawer/lily58.svg)
 
-*SVGs generated locally via `make keymap-drawer` — see [config](./config/config_keymap-drawer.yaml) — powered by [keymap-drawer](https://github.com/caksoylar/keymap-drawer)*
+*SVGs generated locally via `make keymap-drawer` (also runs automatically with `make build`) — see [config](./config/config_keymap-drawer.yaml) — powered by [keymap-drawer](https://github.com/caksoylar/keymap-drawer)*
 
 # QUICK START
 > [!NOTE]
@@ -104,6 +104,12 @@ the need to configure anything else. You just have to follow the steps below:
    - nice_corne_right.uf2 for [nice_nano_v2] as a peripheral
 7. If you need help, you can ask in the [ZMK Discord]
 8. Enjoy your new keyboard
+
+> [!NOTE]
+>
+> Keymap SVG images (shown in [INTRO](#INTRO)) are generated locally via `make keymap-drawer`.
+> They are also generated automatically when you run `make build`. View them in the
+> [keymap-drawer/](./keymap-drawer) folder.
 
 See the [INTRO](#INTRO) section above for the visual keymap layouts.
 

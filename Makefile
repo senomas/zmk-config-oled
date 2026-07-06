@@ -295,22 +295,18 @@ build_all:
 	$(MAKE) build BUILD=""
 
 # Generate keymap SVGs using keymap-drawer (https://github.com/caksoylar/keymap-drawer)
-# Runs inside the ZMK build container — no host dependencies beyond Docker/Podman
+# Uses pipx for temporary installation — no pre-install needed beyond pipx itself
 keymap-drawer:
-	@if [ -z "$(CONTAINER_RUNTIME)" ]; then \
-		echo "Neither docker nor podman found. Install Docker Desktop or Podman."; \
+	@if ! command -v pipx >/dev/null 2>&1; then \
+		echo 'pipx not found. Install with: python3 -m pip install --user pipx'; \
 		exit 1; \
 	fi
 	mkdir -p keymap-drawer
 	@for keymap in config/*.keymap; do \
 		name=$$(basename "$$keymap" .keymap); \
 		echo "Generating keymap SVGs for $$name..."; \
-		$(CONTAINER_RUNTIME) run --rm \
-			-v $(PWD)/config:/config:Z \
-			-v $(PWD)/keymap-drawer:/keymap-drawer:Z \
-			-w /work \
-			zmkfirmware/zmk-build-arm:stable \
-			sh -c "apt-get update -qq && apt-get install -qq -y python3-pip && pip3 install -q --break-system-packages keymap-drawer && keymap -c /config/config_keymap-drawer.yaml parse -c 12 -z /config/$$name.keymap > /keymap-drawer/$$name.yaml && keymap -c /config/config_keymap-drawer.yaml draw /keymap-drawer/$$name.yaml > /keymap-drawer/$$name.svg" || exit 1; \
+		pipx run keymap-drawer parse -c config/config_keymap-drawer.yaml -c 12 -z "$$keymap" > "keymap-drawer/$$name.yaml" && \
+		pipx run keymap-drawer draw -c config/config_keymap-drawer.yaml "keymap-drawer/$$name.yaml" > "keymap-drawer/$$name.svg" || exit 1; \
 	done
 
 ### CODEBASE_UROB START

@@ -1,6 +1,14 @@
 # zmk
 zmk/
 
+# west workspace
+.west/
+.zmk-workspace/
+modules/
+bootloader/
+tools/
+zephyr/
+
 # sketchybar
 sketchybar/dotfiles/
 sketchybar/dotfiles

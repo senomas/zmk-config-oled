@@ -19,7 +19,7 @@
 # to update the branch
 # https://hub.docker.com/r/zmkfirmware/zmk-dev-arm/tags
 # https://github.com/zmkfirmware/zmk/blob/main/.devcontainer/Dockerfile
-# docker pull zmkfirmware/zmk-dev-arm:3.2-branch
+# $(CONTAINER_RUNTIME) pull zmkfirmware/zmk-dev-arm:3.2-branch
 #
 # CUSTOM BRANCH EXAMPLE:
 # git clone https://github.com/petejohanson/zmk -b v3.4.0+zmk-fixes
@@ -30,6 +30,38 @@
 # -DKEYMAP_FILE=../../config/other-corne.keymap -DCONFIG_ZMK_KEYBOARD_NAME=\"other-corne\" -DEXTRA_CONF_FILE=../../config/other-corne.conf
 # module:
 # https://github.com/caksoylar/zmk-rgbled-widget
+
+# Default target: show help
+.DEFAULT_GOAL := help
+
+help:
+	@echo "Usage: make [target]"
+	@echo ""
+	@echo "Primary targets (CI-aligned):"
+	@echo "  build          Build all firmware defined in build.yaml (what CI builds)"
+	@echo "  codebase       Initialize west workspace from config/west.yml"
+	@echo ""
+	@echo "Flash targets:"
+	@echo "  nice_corne_flash_left     Flash left corne firmware to nice_nano_v2"
+	@echo "  nice_corne_flash_right    Flash right corne firmware to nice_nano_v2"
+	@echo "  puchi_corne_flash_left    Flash left corne firmware to puchi_ble"
+	@echo "  puchi_corne_flash_right   Flash right corne firmware to puchi_ble"
+	@echo ""
+	@echo "Advanced (urob branch):"
+	@echo "  codebase_urob  Clone urob/zmk and init"
+	@echo "  corne_urob     Build all corne firmware with urob branch"
+	@echo ""
+	@echo "Utility:"
+	@echo "  shell          Open a shell in the ZMK build container"
+	@echo "  clean          Remove ZMK source and containers/volumes"
+	@echo "  clean_firmware Remove all built .uf2 files"
+	@echo "  clean_all      Remove everything (source + firmware + containers)"
+
+# Auto-detect container runtime (prefer docker, fall back to podman)
+CONTAINER_RUNTIME := $(shell which docker 2>/dev/null || which podman 2>/dev/null)
+ifeq ($(CONTAINER_RUNTIME),)
+  $(error Neither docker nor podman found. Install Docker Desktop or Podman.)
+endif
 
 ### config
 # extra_conf_file_oled_rgb= -DEXTRA_CONF_FILE=${PWD}/config/config_ready/nice/oled_rgb/corne.conf
@@ -180,117 +212,170 @@ clone_zmk_default:
 	if [ ! -d zmk ]; then git clone https://github.com/zmkfirmware/zmk; fi
 
 codebase_default: clone_zmk_default
-	docker run ${docker_opts} sh -c '\
+	$(CONTAINER_RUNTIME) run ${docker_opts} sh -c '\
 		west init -l /zmk/app/; \
 		west update'
 clone_zmk_urob:
 	if [ ! -d zmk ]; then git clone https://github.com/urob/zmk; fi
 
 codebase_urob: clone_zmk_urob
-	docker run ${docker_opts} sh -c '\
+	$(CONTAINER_RUNTIME) run ${docker_opts} sh -c '\
 		west init -l /zmk/app/; \
 		west update'
 
+# CI-aligned codebase target: uses config/west.yml to fetch ZMK at pinned version
+# Workspace cached on host at .zmk-workspace/ (in .gitignore)
+# config/ and boards/ are mounted inside /workspace so west.yml's 'self: path: config' resolves correctly
+ZMK_WORKSPACE := $(PWD)/.zmk-workspace
+codebase:
+	mkdir -p $(ZMK_WORKSPACE)
+	$(CONTAINER_RUNTIME) run --rm \
+		-v $(ZMK_WORKSPACE):/workspace \
+		-v $(PWD)/config:/workspace/config:Z \
+		-v $(PWD)/boards:/workspace/boards:Z \
+		-w /workspace \
+		zmkfirmware/zmk-build-arm:stable \
+		sh -c 'if [ -d .west ]; then west update; else west init -l config && west update; fi'
+
+# Build all firmware defined in build.yaml (CI-aligned)
+# Parses build.yaml on the host, then runs west build in Docker for each firmware
+build: codebase
+	mkdir -p firmware
+	@python3 scripts/parse-build-yaml.py | jq -c '.[]' | while IFS= read -r entry; do \
+		board=$$(echo "$$entry" | jq -r '.board // empty'); \
+		shield=$$(echo "$$entry" | jq -r '.shield // empty'); \
+		cmake_args=$$(echo "$$entry" | jq -r '.["cmake-args"] // empty'); \
+		artifact=$$(echo "$$entry" | jq -r '.["artifact-name"] // empty'); \
+		snippet=$$(echo "$$entry" | jq -r '.snippet // empty'); \
+		if [ -z "$$artifact" ]; then \
+			artifact="$${board}-$${shield}"; \
+		fi; \
+		artifact=$$(echo "$$artifact" | tr " " "_"); \
+		snippet_flag=""; \
+		if [ -n "$$snippet" ]; then \
+			snippet_flag="-S $$snippet"; \
+		fi; \
+		shield_arg=""; \
+		if [ -n "$$shield" ]; then \
+			shield_arg="-DSHIELD=\"$$shield\""; \
+		fi; \
+		echo "Building $$artifact (board=$$board, shield=$$shield)..."; \
+		$(CONTAINER_RUNTIME) run --rm \
+			-v $(ZMK_WORKSPACE):/workspace \
+			-v $(PWD)/config:/workspace/config:Z \
+			-v $(PWD)/boards:/workspace/boards:Z \
+			-v $(PWD)/firmware:/firmware:Z \
+			-w /workspace \
+			zmkfirmware/zmk-build-arm:stable \
+			sh -c "rm -rf build/$$artifact && west build -s zmk/app -d build/$$artifact -b $$board \
+				$$snippet_flag -- $$shield_arg \
+				-DZEPHYR_BASE=/workspace/zephyr \
+				-DZephyr_DIR=/workspace/zephyr/share/zephyr-package/cmake \
+				-DZMK_CONFIG=/workspace/config \
+				$$cmake_args && \
+			cp build/$$artifact/zephyr/zmk.uf2 /firmware/$$artifact.uf2" || exit 1; \
+	done
+
 ### CODEBASE_UROB START
 only_nice_corne_left_view_urob:
-	docker run --rm ${docker_opts} \
+	$(CONTAINER_RUNTIME) run --rm ${docker_opts} \
 		${west_built_nice} ${shield_corne_left_view} \
 		${keyboard_name_nice} ${extra_modules}
-	docker cp ${urob}:${uf2_copy_nice_corne_left}
+	$(CONTAINER_RUNTIME) cp ${urob}:${uf2_copy_nice_corne_left}
 	${uf2_chmod_nice_corne_left}
 only_nice_corne_right_view_urob:
-	docker run --rm ${docker_opts} \
+	$(CONTAINER_RUNTIME) run --rm ${docker_opts} \
 		${west_built_nice} ${shield_corne_right_view} ${extra_modules}
-	docker cp ${urob}:${uf2_copy_nice_corne_right}
+	$(CONTAINER_RUNTIME) cp ${urob}:${uf2_copy_nice_corne_right}
 	${uf2_chmod_nice_corne_right}
 only_puchi_corne_left_view_urob:
-	docker run --rm ${docker_opts} \
+	$(CONTAINER_RUNTIME) run --rm ${docker_opts} \
 		${west_built_puchi} ${shield_corne_left_view} \
 		${keyboard_name_puchi} ${extra_modules}
-	docker cp ${urob}:${uf2_copy_puchi_corne_left}
+	$(CONTAINER_RUNTIME) cp ${urob}:${uf2_copy_puchi_corne_left}
 	${uf2_chmod_puchi_corne_left}
 only_puchi_corne_right_view_urob:
-	docker run --rm ${docker_opts} \
+	$(CONTAINER_RUNTIME) run --rm ${docker_opts} \
 		${west_built_puchi} ${shield_corne_right} ${extra_modules}
-	docker cp ${urob}:${uf2_copy_puchi_corne_right}
+	$(CONTAINER_RUNTIME) cp ${urob}:${uf2_copy_puchi_corne_right}
 	${uf2_chmod_puchi_corne_right}
 only_nice_corne_left_peripheral_view_urob:
-	docker run --rm ${docker_opts} \
+	$(CONTAINER_RUNTIME) run --rm ${docker_opts} \
 		${west_built_nice} ${shield_corne_left_peripheral_view} ${extra_modules}
-	docker cp ${urob}:${uf2_copy_nice_corne_left_peripheral_view}
+	$(CONTAINER_RUNTIME) cp ${urob}:${uf2_copy_nice_corne_left_peripheral_view}
 	${uf2_chmod_nice_corne_left_peripheral_view}
 only_puchi_corne_left_peripheral_view_urob:
-	docker run --rm ${docker_opts} \
+	$(CONTAINER_RUNTIME) run --rm ${docker_opts} \
 		${west_built_puchi} ${shield_corne_left_peripheral_view} ${extra_modules}
-	docker cp ${urob}:${uf2_copy_puchi_corne_left_peripheral_view}
+	$(CONTAINER_RUNTIME) cp ${urob}:${uf2_copy_puchi_corne_left_peripheral_view}
 	${uf2_chmod_puchi_corne_left_peripheral_view}
 only_nice_corne_dongle_pro_micro_dongle_display_urob:
-	docker run --rm ${docker_opts} \
+	$(CONTAINER_RUNTIME) run --rm ${docker_opts} \
 		${west_built_nice} ${shield_corne_dongle_pro_micro_dongle_display} ${extra_modules}
-	docker cp ${urob}:${uf2_copy_nice_corne_dongle_pro_micro_dongle_display}
+	$(CONTAINER_RUNTIME) cp ${urob}:${uf2_copy_nice_corne_dongle_pro_micro_dongle_display}
 	${uf2_chmod_nice_corne_dongle_pro_micro_dongle_display}
 only_puchi_corne_dongle_pro_micro_dongle_display_urob:
-	docker run --rm ${docker_opts} \
+	$(CONTAINER_RUNTIME) run --rm ${docker_opts} \
 		${west_built_puchi} ${shield_corne_dongle_pro_micro_dongle_display} ${extra_modules}
-	docker cp ${urob}:${uf2_copy_puchi_corne_dongle_pro_micro_dongle_display}
+	$(CONTAINER_RUNTIME) cp ${urob}:${uf2_copy_puchi_corne_dongle_pro_micro_dongle_display}
 	${uf2_chmod_puchi_corne_dongle_pro_micro_dongle_display}
 only_corne_xiao_corne_dongle_xiao_dongle_display_urob:
-	docker run --rm ${docker_opts} \
+	$(CONTAINER_RUNTIME) run --rm ${docker_opts} \
 		${west_built_xiao} ${shield_xiao_corne_dongle_xiao_dongle_display} ${extra_modules}
-	docker cp ${urob}:${uf2_copy_xiao_corne_dongle_xiao_dongle_display}
+	$(CONTAINER_RUNTIME) cp ${urob}:${uf2_copy_xiao_corne_dongle_xiao_dongle_display}
 	${uf2_chmod_xiao_corne_dongle_xiao_dongle_display}
 only_nice_settings_reset_urob:
-	docker run --rm ${docker_opts} \
+	$(CONTAINER_RUNTIME) run --rm ${docker_opts} \
 		${west_built_nice} ${shield_settings_reset}
-	docker cp ${urob}:${uf2_copy_nice_corne_settings_reset}
+	$(CONTAINER_RUNTIME) cp ${urob}:${uf2_copy_nice_corne_settings_reset}
 	${uf2_chmod_nice_corne_settings_reset}
 only_puchi_settings_reset_urob:
-	docker run --rm ${docker_opts} \
+	$(CONTAINER_RUNTIME) run --rm ${docker_opts} \
 		${west_built_puchi} ${shield_settings_reset}
-	docker cp ${urob}:${uf2_copy_puchi_corne_settings_reset}
+	$(CONTAINER_RUNTIME) cp ${urob}:${uf2_copy_puchi_corne_settings_reset}
 	${uf2_chmod_puchi_corne_settings_reset}
 only_xiao_settings_reset_urob:
-	docker run --rm ${docker_opts} \
+	$(CONTAINER_RUNTIME) run --rm ${docker_opts} \
 		${west_built_xiao} ${shield_settings_reset}
-	docker cp ${urob}:${uf2_copy_xiao_corne_settings_reset}
+	$(CONTAINER_RUNTIME) cp ${urob}:${uf2_copy_xiao_corne_settings_reset}
 	${uf2_chmod_xiao_corne_settings_reset}
 
 ### MC: TODO: excluded for the moment START
 only_corne_left_peripheral_oled_urob:
-	docker run --rm ${docker_opts} \
+	$(CONTAINER_RUNTIME) run --rm ${docker_opts} \
 		${west_built_nice} ${shield_corne_left_peripheral_oled} ${extra_modules}
-	docker cp ${urob}:${uf2_copy_nice_corne_left_peripheral_oled}
+	$(CONTAINER_RUNTIME) cp ${urob}:${uf2_copy_nice_corne_left_peripheral_oled}
 	${uf2_chmod_nice_corne_left_peripheral_oled}
-	docker run --rm ${docker_opts} \
+	$(CONTAINER_RUNTIME) run --rm ${docker_opts} \
 		${west_built_puchi} ${shield_corne_left_peripheral_oled} ${extra_modules}
-	docker cp ${urob}:${uf2_copy_puchi_corne_left_peripheral_oled}
+	$(CONTAINER_RUNTIME) cp ${urob}:${uf2_copy_puchi_corne_left_peripheral_oled}
 	${uf2_chmod_puchi_corne_left_peripheral_oled}
 only_corne_dongle_pro_micro_urob:
-	docker run --rm ${docker_opts} \
+	$(CONTAINER_RUNTIME) run --rm ${docker_opts} \
 		${west_built_nice} ${shield_corne_dongle_pro_micro} ${extra_modules}
-	docker cp ${urob}:${uf2_copy_nice_corne_dongle_pro_micro}
+	$(CONTAINER_RUNTIME) cp ${urob}:${uf2_copy_nice_corne_dongle_pro_micro}
 	${uf2_chmod_nice_corne_dongle_pro_micro}
-	docker run --rm ${docker_opts} \
+	$(CONTAINER_RUNTIME) run --rm ${docker_opts} \
 		${west_built_puchi} ${shield_corne_dongle_pro_micro} ${extra_modules}
-	docker cp ${urob}:${uf2_copy_puchi_corne_dongle_pro_micro}
+	$(CONTAINER_RUNTIME) cp ${urob}:${uf2_copy_puchi_corne_dongle_pro_micro}
 	${uf2_chmod_puchi_corne_dongle_pro_micro}
 only_corne_xiao_corne_dongle_xiao_urob:
-	docker run --rm ${docker_opts} \
+	$(CONTAINER_RUNTIME) run --rm ${docker_opts} \
 		${west_built_xiao} ${shield_xiao_corne_dongle_xiao} ${extra_modules}
-	docker cp ${urob}:${uf2_copy_xiao_corne_dongle_xiao}
+	$(CONTAINER_RUNTIME) cp ${urob}:${uf2_copy_xiao_corne_dongle_xiao}
 	${uf2_chmod_xiao_corne_dongle_xiao}
 ### MC: TODO: excluded for the moment END
 
 ### MC: rgbled_adapter TODO: START
 only_corne_xiao_corne_dongle_xiao_rgbled_adapter_urob:
-	docker run --rm ${docker_opts} \
+	$(CONTAINER_RUNTIME) run --rm ${docker_opts} \
 		${west_built_xiao} ${shield_xiao_corne_dongle_xiao_rgbled_adapter} ${extra_modules}
-	docker cp ${urob}:${uf2_copy_xiao_corne_dongle_xiao_rgbled_adapter}
+	$(CONTAINER_RUNTIME) cp ${urob}:${uf2_copy_xiao_corne_dongle_xiao_rgbled_adapter}
 	${uf2_chmod_xiao_corne_dongle_xiao_rgbled_adapter}
 only_corne_xiao_corne_dongle_xiao_dongle_display_rgbled_adapter_urob:
-	docker run --rm ${docker_opts} \
+	$(CONTAINER_RUNTIME) run --rm ${docker_opts} \
 		${west_built_xiao} ${shield_xiao_corne_dongle_xiao_dongle_display_rgbled_adapter} ${extra_modules}
-	docker cp ${urob}:${uf2_copy_xiao_corne_dongle_xiao_dongle_display_rgbled_adapter}
+	$(CONTAINER_RUNTIME) cp ${urob}:${uf2_copy_xiao_corne_dongle_xiao_dongle_display_rgbled_adapter}
 	${uf2_chmod_xiao_corne_dongle_xiao_dongle_display_rgbled_adapter}
 ### MC: rgbled_adapter TODO: END
 
@@ -315,7 +400,7 @@ corne_urob: only_corne_left_view_urob \
 
 # Open a shell within the ZMK environment
 shell:
-	docker run --rm ${docker_opts} /bin/bash
+	$(CONTAINER_RUNTIME) run --rm ${docker_opts} /bin/bash
 
 # Flash the appropriate firmware to the bootloader
 nice_corne_flash_left:
@@ -345,8 +430,8 @@ clean_zmk:
 	if [ -d zmk ]; then rm -rfv zmk; fi
 
 clean: clean_zmk
-	docker ps -aq --filter name='^zmk' | xargs -r docker container rm
-	docker volume list -q --filter name='zmk' | xargs -r docker volume rm
+	$(CONTAINER_RUNTIME) ps -aq --filter name='^zmk' | xargs -r $(CONTAINER_RUNTIME) container rm
+	$(CONTAINER_RUNTIME) volume list -q --filter name='zmk' | xargs -r $(CONTAINER_RUNTIME) volume rm
 
 clean_all: clean clean_firmware
 	@echo "cleaning all"

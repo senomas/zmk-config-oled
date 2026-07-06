@@ -27,7 +27,7 @@
             //                    | GUI | LWR | SPC |   | ENT | RSE  | ALT |
 
             bindings = <
-&mt RALT ESCAPE  &kp Q  &kp W  &kp E         &kp R        &kp T          &kp Y        &kp U        &kp I            &kp O    &kp P     &mt RALT BACKSPACE
+&mt RALT ESCAPE  &kp Q  &kp W  &kp E         &kp R        &kp T          &kp Y        &kp U        &kp I            &kp O    &kp P     &kp BACKSPACE
 &kp LCTRL        &kp A  &kp S  &kp D         &kp F        &kp G          &kp H        &kp J        &kp K            &kp L    &kp SEMI  &mt RCTRL SQT
 &kp LSHFT        &kp Z  &kp X  &kp C         &kp V        &kp B          &kp N        &kp M        &kp COMMA        &kp DOT  &kp FSLH  &mt RIGHT_SHIFT TAB
                                &mt LGUI TAB  &lt 2 ENTER  &lt 1 SPACE    &lt 2 ENTER  &lt 1 SPACE  &mt RGUI ESCAPE
@@ -45,7 +45,7 @@
 
             bindings = <
 &trans  &kp N1  &kp N2  &kp N3  &kp N4     &kp N5    &kp N6     &kp N7         &kp N8     &kp N9     &kp N0                   &trans
-&trans  &trans  &trans  &trans  &trans     &trans    &kp LEFT   &kp DOWN       &kp UP     &kp RIGHT  &trans                   &trans
+&trans  &trans  &trans  &trans  &trans     &trans    &kp LEFT   &kp DOWN       &kp UP     &kp RIGHT  &trans                   &mt RALT GRAVE
 &trans  &trans  &trans  &trans  &trans     &trans    &kp HOME   &kp PAGE_DOWN  &kp PG_UP  &kp END    &mt RIGHT_ALT BACKSLASH  &trans
                         &trans  &lt 3 TAB  &trans    &lt 3 RET  &trans         &trans
             >;
@@ -62,7 +62,7 @@
 
             bindings = <
 &kp TAB  &kp EXCL  &kp AT  &kp HASH  &kp DLLR  &kp PRCNT      &kp CARET  &kp AMPS   &kp LEFT_PARENTHESIS  &kp RPAR  &kp KP_MULTIPLY  &kp BSPC
-&trans   &kp F1    &kp F2  &kp F3    &kp F4    &kp F5         &kp MINUS  &kp EQUAL  &kp LBKT              &kp RBKT  &kp BSLH         &mt RCTRL GRAVE
+&trans   &kp F1    &kp F2  &kp F3    &kp F4    &kp F5         &kp MINUS  &kp EQUAL  &kp LBKT              &kp RBKT  &kp BSLH         &mt RALT GRAVE
 &trans   &kp F6    &kp F7  &kp F8    &kp F9    &kp F10        &kp UNDER  &kp PLUS   &kp LBRC              &kp RBRC  &kp PIPE         &mt RIGHT_SHIFT TILDE
                            &kp LGUI  &trans    &lt 3 SPACE    &trans     &to 3      &trans
             >;

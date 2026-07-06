@@ -8,6 +8,7 @@ firmware/
 
 # keymap-drawer venv cache
 .keymap-drawer-venv/
+.keymap-drawer-cache/
 modules/
 bootloader/
 tools/

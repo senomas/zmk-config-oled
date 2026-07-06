@@ -297,12 +297,14 @@ build_all:
 # Generate keymap SVGs using keymap-drawer (https://github.com/caksoylar/keymap-drawer)
 # Runs inside Docker with a host-cached Python venv at .keymap-drawer-venv/
 KEYMAP_DRAWER_VENV := $(PWD)/.keymap-drawer-venv
+KEYMAP_DRAWER_CACHE := $(PWD)/.keymap-drawer-cache
 keymap-drawer:
-	mkdir -p keymap-drawer $(KEYMAP_DRAWER_VENV)
+	mkdir -p keymap-drawer $(KEYMAP_DRAWER_VENV) $(KEYMAP_DRAWER_CACHE)
 	$(CONTAINER_RUNTIME) run --rm \
 		-v $(PWD)/config:/config:Z \
 		-v $(PWD)/keymap-drawer:/keymap-drawer:Z \
 		-v $(KEYMAP_DRAWER_VENV):/venv \
+		-v $(KEYMAP_DRAWER_CACHE):/root/.cache/keymap-drawer:Z \
 		-w /work \
 		python:3-slim \
 		sh -c 'if [ ! -f /venv/bin/keymap ]; then \
@@ -312,8 +314,12 @@ keymap-drawer:
 		for keymap in /config/*.keymap; do \
 			name=$$(basename "$$keymap" .keymap); \
 			echo "Generating keymap SVGs for $$name..."; \
-			/venv/bin/keymap -c /config/config_keymap-drawer.yaml parse -c 12 -z "$$keymap" > "/keymap-drawer/$$name.yaml" && \
-			/venv/bin/keymap -c /config/config_keymap-drawer.yaml draw "/keymap-drawer/$$name.yaml" > "/keymap-drawer/$$name.svg" || exit 1; \
+			/venv/bin/keymap -c /config/config_keymap-drawer.yaml parse -c 12 -z "$$keymap" > "/keymap-drawer/$$name.yaml"; \
+			for i in 1 2 3 4 5; do \
+				/venv/bin/keymap -c /config/config_keymap-drawer.yaml draw "/keymap-drawer/$$name.yaml" > "/keymap-drawer/$$name.svg" && break; \
+				echo "Retry $$i/5: sleeping 5s for rate limit..."; \
+				sleep 5; \
+			done || exit 1; \
 		done'
 
 ### CODEBASE_UROB START

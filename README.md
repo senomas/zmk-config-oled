@@ -47,63 +47,16 @@ a modification to your keymap, you can do it with the online [keymap-editor](htt
 
 # INTRO
 
-> [!CAUTION]
->
-> I AM NOT RESPONSIBLE FOR ANY DAMAGE THIS CODE MAY CAUSE, USE IT AT YOUR OWN
-> RISK.
+## keymap corne
+![keymap-drawer-demo-corne](keymap-drawer/corne.svg)
+## keymap sofle
+![keymap-drawer-demo-sofle](keymap-drawer/sofle.svg)
+## keymap splitkb_aurora_sofle
+![keymap-drawer-demo-splitkb_aurora_sofle](keymap-drawer/splitkb_aurora_sofle.svg)
+## keymap lily58
+![keymap-drawer-demo-lily58](keymap-drawer/lily58.svg)
 
-> [!NOTE]
->
->
-> FEEL FREE TO MODIFY THE CODE TO YOUR LIKING OR USE WHATEVER YOU NEED. I
-> DECIDED TO REVOKE MANY CHANGES AND RETURN TO THE BASE MAPPING, SO THAT
-> ADVANCED AND NON-ADVANCED  USERS CAN USE THIS REPOSITORY AS A BASE FOR THEIR
-> CONFIGURATIONS. IF YOU HAVE ANY QUESTIONS, DON'T HESITATE TO ASK. IF YOU HAVE
-> ANY SUGGESTIONS, FEEL FREE TO SUGGEST.
-
-
-The objective of this repository is to serve as a base for configuring your
-corne - sofle - lily58 keyboard with the firmware [ZMK firmware] in a simple and fast way.
-without having to configure everything from scratch. Many of us are fascinated
-by customizing our keyboards, but sometimes we don't have the time or
-experience to do it. That is why I have decided to create this repository so
-that you can have a base configuration and you can modify it to your liking.
-
-This base includes the most recent corne - sofle - lily58 configurations, featuring a setup for
-the corne - sofle - lily58 dongle with/without an OLED screen.
-You can also use your keyboard WITH / WITHOUT a dongle of course. with any of the
-plates or screens you have.
-
-Tested with **[puchi_ble_v1]** (used as a dongle and as
-peripherals), **[nice_nano_v2]** (used as a dongle and as peripherals),
-**clones of nice_nano_v2** (used as a dongle and as peripherals), and the
-**[seeeduino_xiao_ble]** (used only as a dongle).
-
-| Main Pros                                                                                       |
-|-------------------------------------------------------------------------------------------------|
-| mobility and flexibility                                                                        |
-| reduction of tension and fatigue (ergonomic and ortholinear)                                    |
-| improved productivity                                                                           |
-| bluetooth and usb-c connection                                                                  |
-| Highly customizable programmable with [ZMK firmware].                                           |
-| compatibility with linux, windows, macos, android, ios and more                                 |
-| completely wireless between the two halves and with the PC                                      |
-| ultra-low consumption. extends battery life to the limit                                        |
-| drag and drop thanks to the included uf2 bootloader                                             |
-| no additional software required for flashing                                                    |
-| support for multiple devices (up to 5)                                                          |
-| mouse keys                                                                                      |
-| rgb                                                                                             |
-| macros                                                                                          |
-| tap dance                                                                                       |
-| combos                                                                                          |
-| up to 1 week of use without charger (with 100mah)                                               |
-| support [nice-view] screen and oled screen                                                      |
-| online editor for keymap. see               [keymap-editor]                                     |
-| 100% open source                                                                                |
-| support for puchi-ble dongle, nice!nano v2, nice!nano v2 clones, seeeduino xiao ble and more... |
-| support with dongle with display 128x32, 128x64 and 128x128                                     |
-| and more...                                                                                     |
+*SVGs generated locally via `make keymap-drawer` — see [config](./config/config_keymap-drawer.yaml) — powered by [keymap-drawer](https://github.com/caksoylar/keymap-drawer)*
 
 # QUICK START
 > [!NOTE]
@@ -152,29 +105,7 @@ the need to configure anything else. You just have to follow the steps below:
 7. If you need help, you can ask in the [ZMK Discord]
 8. Enjoy your new keyboard
 
-Here you can see the visual changes to the configuration:
-> [!NOTE]
->
-> This .svg image is automatically generated every time a change is made with
-> the keymap editor. Github's workflows are responsible for building and
-> generating the .svg file. You just have to go to the
-> [keymap-drawer](./keymap-drawer)  folder and open the .svg file with your
-> preferred browser if you want to see the files. The keymap-drawer
-> configuration file is located in
-> [config](./config/config_keymap-drawer.yaml).
-> The file for the workflows is in [workflows](./.github/workflows/keymap-drawer.yaml) in case you want to modify it.
-
-## keymap corne
-[![keymap-drawer-demo-corne](keymap-drawer/corne.svg)](https://www.youtube.com/c/mctechnology17)
-## keymap sofle
-[![keymap-drawer-demo-sofle](keymap-drawer/sofle.svg)](https://www.youtube.com/c/mctechnology17)
-## keymap splitkb_aurora_sofle
-[![keymap-drawer-demo-splitkb_aurora_sofle](keymap-drawer/splitkb_aurora_sofle.svg)](https://www.youtube.com/c/mctechnology17)
-## keymap lily58
-[![keymap-drawer-demo-lily58](keymap-drawer/lily58.svg)](https://www.youtube.com/c/mctechnology17)
-
-If you want to customize this image with shapes/colors/etc. You can see these references:
-[^1] [^2] [^3]
+See the [INTRO](#INTRO) section above for the visual keymap layouts.
 
 
 # LOCAL INSTALLATION
@@ -238,7 +169,7 @@ zmk-config # main folder
 │   └── west.yml # conf to connect with the repository
 ├── firmware
 │   └── *.uf2 # all the firmwares
-├── keymap-drawer # folder with the keymap-drawer
+├── keymap-drawer # generated by `make keymap-drawer`
 │   ├── corne.svg # img of the keymap
 │   └── corne.yaml # keymap file yaml format for keymap-drawer
 └── src

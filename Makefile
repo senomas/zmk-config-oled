@@ -34,12 +34,15 @@
 # Default target: show help
 .DEFAULT_GOAL := help
 
+.PHONY: keymap-drawer
+
 help:
 	@echo "Usage: make [target]"
 	@echo ""
 	@echo "Primary targets (CI-aligned):"
 	@echo "  build          Build selected firmware (BUILD var, default: nice_corne_left/right_oled)"
 	@echo "  build_all      Build all firmware defined in build.yaml"
+	@echo "  keymap-drawer  Generate keymap SVGs from config/*.keymap files"
 	@echo "  codebase       Initialize west workspace from config/west.yml"
 	@echo ""
 	@echo "Flash targets:"
@@ -59,10 +62,9 @@ help:
 	@echo "  clean_all      Remove everything (source + firmware + containers)"
 
 # Auto-detect container runtime (prefer docker, fall back to podman)
-CONTAINER_RUNTIME := $(shell which docker 2>/dev/null || which podman 2>/dev/null)
-ifeq ($(CONTAINER_RUNTIME),)
-  $(error Neither docker nor podman found. Install Docker Desktop or Podman.)
-endif
+# Uses recursive expansion (=) so it's only evaluated when a target that
+# needs a container runtime is invoked (help and keymap-drawer don't need it).
+CONTAINER_RUNTIME = $(shell which docker 2>/dev/null || which podman 2>/dev/null)
 
 ### config
 # extra_conf_file_oled_rgb= -DEXTRA_CONF_FILE=${PWD}/config/config_ready/nice/oled_rgb/corne.conf
@@ -244,7 +246,7 @@ codebase:
 
 # Build all firmware defined in build.yaml (CI-aligned)
 # Parses build.yaml on the host, then runs west build in Docker for each firmware
-build: codebase
+build: codebase keymap-drawer
 	mkdir -p firmware
 	@build_filter="$(BUILD)"; \
 	python3 scripts/parse-build-yaml.py | jq -c '.[]' | while IFS= read -r entry; do \
@@ -291,6 +293,25 @@ build: codebase
 # Build all firmware defined in build.yaml (no filter)
 build_all:
 	$(MAKE) build BUILD=""
+
+# Generate keymap SVGs using keymap-drawer (https://github.com/caksoylar/keymap-drawer)
+# Runs inside the ZMK build container — no host dependencies beyond Docker/Podman
+keymap-drawer:
+	@if [ -z "$(CONTAINER_RUNTIME)" ]; then \
+		echo "Neither docker nor podman found. Install Docker Desktop or Podman."; \
+		exit 1; \
+	fi
+	mkdir -p keymap-drawer
+	@for keymap in config/*.keymap; do \
+		name=$$(basename "$$keymap" .keymap); \
+		echo "Generating keymap SVGs for $$name..."; \
+		$(CONTAINER_RUNTIME) run --rm \
+			-v $(PWD)/config:/config:Z \
+			-v $(PWD)/keymap-drawer:/keymap-drawer:Z \
+			-w /work \
+			zmkfirmware/zmk-build-arm:stable \
+			sh -c "apt-get update -qq && apt-get install -qq -y python3-pip && pip3 install -q --break-system-packages keymap-drawer && keymap -c /config/config_keymap-drawer.yaml parse -c 12 -z /config/$$name.keymap > /keymap-drawer/$$name.yaml && keymap -c /config/config_keymap-drawer.yaml draw /keymap-drawer/$$name.yaml > /keymap-drawer/$$name.svg" || exit 1; \
+	done
 
 ### CODEBASE_UROB START
 only_nice_corne_left_view_urob:

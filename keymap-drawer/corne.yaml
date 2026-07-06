@@ -1,174 +1,163 @@
 layout: {zmk_keyboard: corne}
 layers:
   BAS:
-  - {t: ESCAPE, h: '$$mdi:apple-keyboard-option$$'}
-  - Q
-  - W
-  - E
-  - R
-  - T
-  - Y
-  - U
-  - I
-  - O
-  - P
-  - {t: BACKSPACE, h: '$$mdi:apple-keyboard-option$$'}
-  - $$mdi:apple-keyboard-control$$
-  - A
-  - S
-  - D
-  - F
-  - G
-  - H
-  - J
-  - K
-  - L
-  - ;
-  - {t: '''', h: '$$mdi:apple-keyboard-control$$'}
-  - $$mdi:apple-keyboard-shift$$
-  - Z
-  - X
-  - C
-  - V
-  - B
-  - N
-  - M
-  - ','
-  - .
-  - /
-  - {t: ↹, h: RIGHT SHIFT}
-  - {t: ↹, h: '$$mdi:apple-keyboard-command$$'}
-  - {t: ENTER, h: RAI}
-  - {t: ␣, h: LOW}
-  - {t: ENTER, h: RAI}
-  - {t: ␣, h: LOW}
-  - {t: ESCAPE, h: '$$mdi:apple-keyboard-command$$'}
+  - - {t: ESCAPE, h: '$$mdi:apple-keyboard-option$$'}
+    - Q
+    - W
+    - E
+    - R
+    - T
+    - Y
+    - U
+    - I
+    - O
+    - P
+    - {t: BACKSPACE, h: '$$mdi:apple-keyboard-option$$'}
+  - - $$mdi:apple-keyboard-control$$
+    - A
+    - S
+    - D
+    - F
+    - G
+    - H
+    - J
+    - K
+    - L
+    - ;
+    - {t: '''', h: '$$mdi:apple-keyboard-control$$'}
+  - - $$mdi:apple-keyboard-shift$$
+    - Z
+    - X
+    - C
+    - V
+    - B
+    - N
+    - M
+    - ','
+    - .
+    - /
+    - {t: ↹, h: RIGHT SHIFT}
+  - - {t: ↹, h: '$$mdi:apple-keyboard-command$$'}
+    - {t: ENTER, h: RAI}
+    - {t: ␣, h: LOW}
+    - {t: ENTER, h: RAI}
+    - {t: ␣, h: LOW}
+    - {t: ESCAPE, h: '$$mdi:apple-keyboard-command$$'}
   LOW:
-  - {t: ▽, type: trans}
-  - '1'
-  - '2'
-  - '3'
-  - '4'
-  - '5'
-  - '6'
-  - '7'
-  - '8'
-  - '9'
-  - '0'
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - ←
-  - ↓
-  - ↑
-  - →
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - Home
-  - PAGE DOWN
-  - Page Up
-  - End
-  - {t: \, h: RIGHT ALT}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ↹, h: EXT}
-  - {type: held}
-  - {t: ⏎, h: EXT}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
+  - - {t: ▽, type: trans}
+    - '1'
+    - '2'
+    - '3'
+    - '4'
+    - '5'
+    - '6'
+    - '7'
+    - '8'
+    - '9'
+    - '0'
+    - {t: ▽, type: trans}
+  - - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - ←
+    - ↓
+    - ↑
+    - →
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+  - - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - Home
+    - PAGE DOWN
+    - Page Up
+    - End
+    - {t: \, h: RIGHT ALT}
+    - {t: ▽, type: trans}
+  - - {t: ▽, type: trans}
+    - {t: ↹, h: EXT}
+    - {type: held}
+    - {t: ⏎, h: EXT}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
   RAI:
-  - ↹
-  - '!'
-  - '@'
-  - '#'
-  - $
-  - '%'
-  - ^
-  - AMPS
-  - (
-  - )
-  - KP MULTIPLY
-  - $$mdi:backspace-outline$$
-  - {t: ▽, type: trans}
-  - F1
-  - F2
-  - F3
-  - F4
-  - F5
-  - '-'
-  - '='
-  - '['
-  - ']'
-  - \
-  - {t: '`', h: '$$mdi:apple-keyboard-control$$'}
-  - {t: ▽, type: trans}
-  - F6
-  - F7
-  - F8
-  - F9
-  - F10
-  - _
-  - +
-  - '{'
-  - '}'
-  - '|'
-  - {t: '~', h: RIGHT SHIFT}
-  - $$mdi:apple-keyboard-command$$
-  - {type: held}
-  - {t: ␣, h: EXT}
-  - {t: ▽, type: trans}
-  - {t: EXT, h: toggle}
-  - {t: ▽, type: trans}
+  - [↹, '!', '@', '#', $, '%', ^, AMPS, (, ), KP MULTIPLY, '$$mdi:backspace-outline$$']
+  - - {t: ▽, type: trans}
+    - F1
+    - F2
+    - F3
+    - F4
+    - F5
+    - '-'
+    - '='
+    - '['
+    - ']'
+    - \
+    - {t: '`', h: '$$mdi:apple-keyboard-control$$'}
+  - - {t: ▽, type: trans}
+    - F6
+    - F7
+    - F8
+    - F9
+    - F10
+    - _
+    - +
+    - '{'
+    - '}'
+    - '|'
+    - {t: '~', h: RIGHT SHIFT}
+  - - $$mdi:apple-keyboard-command$$
+    - {type: held}
+    - {t: ␣, h: EXT}
+    - {t: ▽, type: trans}
+    - {t: EXT, h: toggle}
+    - {t: ▽, type: trans}
   EXT:
-  - {t: ▽, type: trans}
-  - BT 1
-  - BT 2
-  - BT 3
-  - BT 4
-  - BT 5
-  - ←
-  - '&msc SCRL_DOWN'
-  - '&msc SCRL_UP'
-  - →
-  - Alt+←
-  - Alt+→
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - '&mmv MOVE_LEFT'
-  - '&mmv MOVE_DOWN'
-  - '&mmv MOVE_UP'
-  - '&mmv MOVE_RIGHT'
-  - Alt+Home
-  - Ctl+R
-  - '&soft_off'
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - BT CLR ALL
-  - BT CLR
-  - {t: ▽, type: trans}
-  - PAGE DOWN
-  - PAGE DOWN
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: BAS, h: toggle}
-  - {t: '&mkp MCLK', type: held}
-  - {t: '&mkp RCLK', type: held}
-  - '&mkp LCLK'
-  - '&mkp RCLK'
-  - {t: BAS, h: toggle}
+  - - {t: ▽, type: trans}
+    - BT 1
+    - BT 2
+    - BT 3
+    - BT 4
+    - BT 5
+    - ←
+    - Scroll ↓
+    - Scroll ↑
+    - →
+    - Alt+←
+    - Alt+→
+  - - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - Mouse ←
+    - Mouse ↓
+    - Mouse ↑
+    - Mouse →
+    - Alt+Home
+    - Ctl+R
+  - - '&soft_off'
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - BT CLR ALL
+    - BT CLR
+    - {t: ▽, type: trans}
+    - PAGE DOWN
+    - PAGE DOWN
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+    - {t: ▽, type: trans}
+  - - {t: BAS, h: toggle}
+    - {t: Middle Click, type: held}
+    - {t: Right Click, type: held}
+    - Left Click
+    - Right Click
+    - {t: BAS, h: toggle}

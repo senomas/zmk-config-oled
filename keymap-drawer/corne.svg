@@ -824,13 +824,13 @@ rect.held, rect.combo.held {
 <g transform="translate(588, 35)" class="key keypos-7">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
 <text x="0" y="0" class="key tap">
-<tspan x="0" dy="-0.6em" style="font-size: 67%">&amp;msc</tspan><tspan x="0" dy="1.2em" style="font-size: 67%">SCRL_DOWN</tspan>
+<tspan x="0" dy="-0.6em">Scroll</tspan><tspan x="0" dy="1.2em">↓</tspan>
 </text>
 </g>
 <g transform="translate(644, 28)" class="key keypos-8">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
 <text x="0" y="0" class="key tap">
-<tspan x="0" dy="-0.6em" style="font-size: 86%">&amp;msc</tspan><tspan x="0" dy="1.2em" style="font-size: 86%">SCRL_UP</tspan>
+<tspan x="0" dy="-0.6em">Scroll</tspan><tspan x="0" dy="1.2em">↑</tspan>
 </text>
 </g>
 <g transform="translate(700, 35)" class="key keypos-9">
@@ -872,25 +872,25 @@ rect.held, rect.combo.held {
 <g transform="translate(532, 98)" class="key keypos-18">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
 <text x="0" y="0" class="key tap">
-<tspan x="0" dy="-0.6em" style="font-size: 67%">&amp;mmv</tspan><tspan x="0" dy="1.2em" style="font-size: 67%">MOVE_LEFT</tspan>
+<tspan x="0" dy="-0.6em">Mouse</tspan><tspan x="0" dy="1.2em">←</tspan>
 </text>
 </g>
 <g transform="translate(588, 91)" class="key keypos-19">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
 <text x="0" y="0" class="key tap">
-<tspan x="0" dy="-0.6em" style="font-size: 67%">&amp;mmv</tspan><tspan x="0" dy="1.2em" style="font-size: 67%">MOVE_DOWN</tspan>
+<tspan x="0" dy="-0.6em">Mouse</tspan><tspan x="0" dy="1.2em">↓</tspan>
 </text>
 </g>
 <g transform="translate(644, 84)" class="key keypos-20">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
 <text x="0" y="0" class="key tap">
-<tspan x="0" dy="-0.6em" style="font-size: 86%">&amp;mmv</tspan><tspan x="0" dy="1.2em" style="font-size: 86%">MOVE_UP</tspan>
+<tspan x="0" dy="-0.6em">Mouse</tspan><tspan x="0" dy="1.2em">↑</tspan>
 </text>
 </g>
 <g transform="translate(700, 91)" class="key keypos-21">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
 <text x="0" y="0" class="key tap">
-<tspan x="0" dy="-0.6em" style="font-size: 60%">&amp;mmv</tspan><tspan x="0" dy="1.2em" style="font-size: 60%">MOVE_RIGHT</tspan>
+<tspan x="0" dy="-0.6em">Mouse</tspan><tspan x="0" dy="1.2em">→</tspan>
 </text>
 </g>
 <g transform="translate(756, 105)" class="key keypos-22">
@@ -968,25 +968,25 @@ rect.held, rect.combo.held {
 <g transform="translate(286, 213) rotate(15.0)" class="key held keypos-37">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key held"/>
 <text x="0" y="0" class="key held tap">
-<tspan x="0" dy="-0.6em">&amp;mkp</tspan><tspan x="0" dy="1.2em">MCLK</tspan>
+<tspan x="0" dy="-0.6em">Middle</tspan><tspan x="0" dy="1.2em">Click</tspan>
 </text>
 </g>
 <g transform="translate(351, 224) rotate(30.0)" class="key held keypos-38">
 <rect rx="6" ry="6" x="-26" y="-40" width="52" height="80" class="key held"/>
 <text x="0" y="0" class="key held tap">
-<tspan x="0" dy="-0.6em">&amp;mkp</tspan><tspan x="0" dy="1.2em">RCLK</tspan>
+<tspan x="0" dy="-0.6em">Right</tspan><tspan x="0" dy="1.2em">Click</tspan>
 </text>
 </g>
 <g transform="translate(489, 224) rotate(-30.0)" class="key keypos-39">
 <rect rx="6" ry="6" x="-26" y="-40" width="52" height="80" class="key"/>
 <text x="0" y="0" class="key tap">
-<tspan x="0" dy="-0.6em">&amp;mkp</tspan><tspan x="0" dy="1.2em">LCLK</tspan>
+<tspan x="0" dy="-0.6em">Left</tspan><tspan x="0" dy="1.2em">Click</tspan>
 </text>
 </g>
 <g transform="translate(554, 213) rotate(-15.0)" class="key keypos-40">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key"/>
 <text x="0" y="0" class="key tap">
-<tspan x="0" dy="-0.6em">&amp;mkp</tspan><tspan x="0" dy="1.2em">RCLK</tspan>
+<tspan x="0" dy="-0.6em">Right</tspan><tspan x="0" dy="1.2em">Click</tspan>
 </text>
 </g>
 <g transform="translate(616, 205)" class="key keypos-41">

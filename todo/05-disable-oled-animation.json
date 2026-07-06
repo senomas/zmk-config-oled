@@ -9,25 +9,49 @@
       "title": "Disable Bongo Cat and peripheral animation in corne.conf",
       "done": false,
       "detail": "In config/corne.conf, in the ### OLED DISPLAY section (around line 102), add three lines right after the existing CONFIG_NICE_OLED_WIDGET_WPM_LUNA=n:\n\nCONFIG_NICE_OLED_WIDGET_WPM_BONGO_CAT=n\nCONFIG_NICE_OLED_WIDGET_WPM_NUMBER=y\nCONFIG_NICE_OLED_WIDGET_ANIMATION_PERIPHERAL=n\n\nExplanations:\n- WPM_BONGO_CAT=n: disables the animated bongo cat on the central (left) side\n- WPM_NUMBER=y: replaces the now-empty WPM area with a plain number readout showing current WPM. Without this, the WPM area is completely blank because speedometer and graph are both off by default and the graph is also blocked by MODIFIERS_INDICATORS_FIXED=y (layout constraint).\n- ANIMATION_PERIPHERAL=n: disables the looping cat animation on the peripheral (right) side",
-      "impl": []
+      "impl": [
+        {
+          "implemented": true,
+          "note": "Added three lines after CONFIG_NICE_OLED_WIDGET_WPM_LUNA=n:\n- CONFIG_NICE_OLED_WIDGET_WPM_BONGO_CAT=n (disables animated bongo cat on central side)\n- CONFIG_NICE_OLED_WIDGET_WPM_NUMBER=y (replaces empty WPM area with plain number)\n- CONFIG_NICE_OLED_WIDGET_ANIMATION_PERIPHERAL=n (disables looping cat animation on peripheral side)",
+          "reviews": []
+        }
+      ]
     },
     {
       "title": "Disable Bongo Cat and peripheral animation in sofle.conf",
       "done": false,
       "detail": "In config/sofle.conf, in the ### OLED DISPLAY section, add:\n\nCONFIG_NICE_OLED_WIDGET_WPM_BONGO_CAT=n\nCONFIG_NICE_OLED_WIDGET_WPM_NUMBER=y\nCONFIG_NICE_OLED_WIDGET_ANIMATION_PERIPHERAL=n\n\nNote: sofle.conf does not have a pre-existing CONFIG_NICE_OLED_WIDGET_WPM_LUNA=n line, so these will be the first nice_oled widget animation overrides. WPM_NUMBER=y is needed to avoid empty space where bongo cat was (see corne task for full explanation).",
-      "impl": []
+      "impl": [
+        {
+          "implemented": true,
+          "note": "Added three lines after CONFIG_ZMK_DISPLAY_STATUS_SCREEN_CUSTOM=y in the ### OLED DISPLAY section:\n- CONFIG_NICE_OLED_WIDGET_WPM_BONGO_CAT=n\n- CONFIG_NICE_OLED_WIDGET_WPM_NUMBER=y\n- CONFIG_NICE_OLED_WIDGET_ANIMATION_PERIPHERAL=n",
+          "reviews": []
+        }
+      ]
     },
     {
       "title": "Disable Bongo Cat and peripheral animation in lily58.conf",
       "done": false,
       "detail": "In config/lily58.conf, in the ### OLED DISPLAY section, add:\n\nCONFIG_NICE_OLED_WIDGET_WPM_BONGO_CAT=n\nCONFIG_NICE_OLED_WIDGET_WPM_NUMBER=y\nCONFIG_NICE_OLED_WIDGET_ANIMATION_PERIPHERAL=n\n\nWPM_NUMBER=y is needed to avoid empty space where bongo cat was.",
-      "impl": []
+      "impl": [
+        {
+          "implemented": true,
+          "note": "Added three lines after CONFIG_ZMK_DISPLAY_STATUS_SCREEN_CUSTOM=y in the ### OLED DISPLAY section:\n- CONFIG_NICE_OLED_WIDGET_WPM_BONGO_CAT=n\n- CONFIG_NICE_OLED_WIDGET_WPM_NUMBER=y\n- CONFIG_NICE_OLED_WIDGET_ANIMATION_PERIPHERAL=n",
+          "reviews": []
+        }
+      ]
     },
     {
       "title": "Disable Bongo Cat and peripheral animation in splitkb_aurora_sofle.conf",
       "done": false,
       "detail": "In config/splitkb_aurora_sofle.conf, in the ### OLED DISPLAY section, add:\n\nCONFIG_NICE_OLED_WIDGET_WPM_BONGO_CAT=n\nCONFIG_NICE_OLED_WIDGET_WPM_NUMBER=y\nCONFIG_NICE_OLED_WIDGET_ANIMATION_PERIPHERAL=n\n\nWPM_NUMBER=y is needed to avoid empty space where bongo cat was.",
-      "impl": []
+      "impl": [
+        {
+          "implemented": true,
+          "note": "Added three lines after CONFIG_ZMK_DISPLAY_STATUS_SCREEN_CUSTOM=y in the ### OLED DISPLAY section:\n- CONFIG_NICE_OLED_WIDGET_WPM_BONGO_CAT=n\n- CONFIG_NICE_OLED_WIDGET_WPM_NUMBER=y\n- CONFIG_NICE_OLED_WIDGET_ANIMATION_PERIPHERAL=n",
+          "reviews": []
+        }
+      ]
     }
   ]
 }

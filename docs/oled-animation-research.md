@@ -92,7 +92,7 @@ From what is configured in `config/corne.conf` (and the three other shield `.con
 
 ## How to Disable Animations
 
-### Option A: Disable all animations, keep static widgets
+### Option A: Disable all animations, keep static widgets (RECOMMENDED)
 
 In each `.conf` file (`config/corne.conf`, `config/sofle.conf`, `config/lily58.conf`,
 `config/splitkb_aurora_sofle.conf`):
@@ -100,9 +100,17 @@ In each `.conf` file (`config/corne.conf`, `config/sofle.conf`, `config/lily58.c
 ```ini
 # Disable animated characters
 CONFIG_NICE_OLED_WIDGET_WPM_BONGO_CAT=n
-CONFIG_NICE_OLED_WIDGET_WPM_LUNA=n            # already set
+CONFIG_NICE_OLED_WIDGET_WPM_LUNA=n            # already set in corne.conf
 CONFIG_NICE_OLED_WIDGET_ANIMATION_PERIPHERAL=n
+# Show WPM as plain number (replaces empty space left by bongo cat)
+CONFIG_NICE_OLED_WIDGET_WPM_NUMBER=y
 ```
+
+**Why `WPM_NUMBER=y` is needed**: With the current defaults, the WPM area is rendered
+entirely by Bongo Cat. Speedometer (`WPM_SPEEDOMETER`) defaults to `n` on OLED, and the
+WPM graph (`WPM_GRAPH`) is blocked by a preprocessor condition in `wpm.c` that skips it
+when `MODIFIERS_INDICATORS_FIXED=y` (no room on the 128px canvas). Without Bongo Cat and
+without `WPM_NUMBER`, the WPM area is completely blank.
 
 ### Option B: Disable WPM widget entirely (removes both animation and gauge)
 
@@ -124,6 +132,25 @@ Luna is not purely static — it's still frame-based animation. For truly no ani
   removes the last consumer of `LV_USE_ANIMIMG`. The Kconfig might still select it transitively
   through `NICE_OLED_WIDGET_STATUS`, but this is harmless.
 
+## Can the right side show modifiers and layer?
+
+**No — not with config changes alone.** The peripheral (right) half runs completely different
+code (`screen_peripheral.c`, compiled via CMakeLists.txt `else` branch for non-central).
+The peripheral firmware does NOT have access to:
+
+- **Layer state**: only `zmk_keymap_highest_layer_active()` is available on the central
+- **HID modifier state**: only `zmk_hid_get_explicit_mods()` is available on the central
+
+These aren't synced across the BLE split connection. The peripheral only knows:
+battery level, USB presence, and split connection status.
+
+Adding mods/layer to the right side would require:
+1. Forking ZMK to add custom split transport messages for layer + HID modifier state
+2. Modifying `screen_peripheral.c` to include and render those widgets
+3. Modifying `CMakeLists.txt` to compile layer/modifier sources for peripheral
+
+This is firmware-level work, not a zmk-config change.
+
 ## Files to Modify
 
 - `config/corne.conf`
@@ -131,4 +158,4 @@ Luna is not purely static — it's still frame-based animation. For truly no ani
 - `config/lily58.conf`
 - `config/splitkb_aurora_sofle.conf`
 
-Each needs the same two lines added in the `### OLED DISPLAY` section.
+Each needs the same 3 lines added in the `### OLED DISPLAY` section.

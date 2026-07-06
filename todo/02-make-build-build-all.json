@@ -1,0 +1,33 @@
+{
+  "meta": {
+    "nn": 2,
+    "name": "make-build-build-all",
+    "goal": "Add BUILD variable to control which firmware `make build` builds (default: nice_corne_left/right_oled), and add `make build_all` to build everything"
+  },
+  "tasks": [
+    {
+      "title": "Add BUILD variable with default firmware selection",
+      "done": false,
+      "detail": "Insert the following block right before the `ZMK_WORKSPACE :=` line (before the 'CI-aligned codebase target' comment block):\n\n```makefile\n# Default firmware to build (space-separated artifact names from build.yaml).\n# Set to empty to build all, or list specific artifacts (e.g. nice_corne_left_oled).\nBUILD ?= nice_corne_left_oled nice_corne_right_oled\n```\n\nThis uses `?=` so it can be overridden by env or command line (e.g. `make build BUILD=\"nice_settings_reset\"`).",
+      "impl": []
+    },
+    {
+      "title": "Add filter logic in build target to skip non-BUILD artifacts",
+      "done": false,
+      "detail": "In the `build:` target, two changes:\n\n1. Change the first shell line from:\n   `@python3 scripts/parse-build-yaml.py | jq -c '.[]' | while IFS= read -r entry; do \\`\n   to:\n   `@build_filter=\"$(BUILD)\"; \\`\n   `python3 scripts/parse-build-yaml.py | jq -c '.[]' | while IFS= read -r entry; do \\`\n\n2. After the line `artifact=$$(echo \"$$artifact\" | tr \" \" \"_\"); \\` and before `snippet_flag=\"\"; \\`, insert:\n\n```makefile\n\t\tif [ -n \"$$build_filter\" ]; then \\\n\t\t\tcase \" $$build_filter \" in \\\n\t\t\t\t*\" $$artifact \"*) ;; \\\n\t\t\t\t*) echo \"Skipping $$artifact (not in BUILD)\"; continue ;; \\\n\t\t\tesac; \\\n\t\tfi; \\\n```\n\nThe double-escaping (`$$build_filter`, `$$artifact`) is required because these are shell variables inside a make recipe. The `case` pattern uses spaces around both the filter list and the artifact name to ensure exact word matching (e.g. `nice_corne_left` won't accidentally match `nice_corne_left_oled`).",
+      "impl": []
+    },
+    {
+      "title": "Add build_all target",
+      "done": false,
+      "detail": "Insert the following block right before `### CODEBASE_UROB START`:\n\n```makefile\n# Build all firmware defined in build.yaml (no filter)\nbuild_all:\n\t$(MAKE) build BUILD=\"\"\n```\n\nWhen BUILD is empty, `[ -n \"$$build_filter\" ]` is false, so the filter block is skipped entirely and everything in build.yaml gets built.",
+      "impl": []
+    },
+    {
+      "title": "Update help text descriptions for build and build_all",
+      "done": false,
+      "detail": "In the `help:` target, update the 'Primary targets (CI-aligned):' section:\n\n1. Change the `build` description from:\n   `@echo \"  build          Build all firmware defined in build.yaml (what CI builds)\"`\n   to:\n   `@echo \"  build          Build selected firmware (BUILD var, default: nice_corne_left/right_oled)\"`\n\n2. Add a new line after the `build` description:\n   `@echo \"  build_all      Build all firmware defined in build.yaml\"`",
+      "impl": []
+    }
+  ]
+}

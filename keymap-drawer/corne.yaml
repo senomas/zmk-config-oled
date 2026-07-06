@@ -37,8 +37,8 @@ layers:
   - .
   - /
   - {t: ↹, h: RIGHT SHIFT}
-  - {t: Esc, h: '$$mdi:apple-keyboard-command$$'}
-  - {t: ↹, h: RAI}
+  - {t: ↹, h: '$$mdi:apple-keyboard-command$$'}
+  - {t: ENTER, h: RAI}
   - {t: ␣, h: LOW}
   - {t: ENTER, h: RAI}
   - {t: ␣, h: LOW}

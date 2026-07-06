@@ -295,19 +295,26 @@ build_all:
 	$(MAKE) build BUILD=""
 
 # Generate keymap SVGs using keymap-drawer (https://github.com/caksoylar/keymap-drawer)
-# Uses pipx for temporary installation — no pre-install needed beyond pipx itself
+# Runs inside Docker with a host-cached Python venv at .keymap-drawer-venv/
+KEYMAP_DRAWER_VENV := $(PWD)/.keymap-drawer-venv
 keymap-drawer:
-	@if ! command -v pipx >/dev/null 2>&1; then \
-		echo 'pipx not found. Install with: python3 -m pip install --user pipx'; \
-		exit 1; \
-	fi
-	mkdir -p keymap-drawer
-	@for keymap in config/*.keymap; do \
-		name=$$(basename "$$keymap" .keymap); \
-		echo "Generating keymap SVGs for $$name..."; \
-		pipx run keymap-drawer parse -c config/config_keymap-drawer.yaml -c 12 -z "$$keymap" > "keymap-drawer/$$name.yaml" && \
-		pipx run keymap-drawer draw -c config/config_keymap-drawer.yaml "keymap-drawer/$$name.yaml" > "keymap-drawer/$$name.svg" || exit 1; \
-	done
+	mkdir -p keymap-drawer $(KEYMAP_DRAWER_VENV)
+	$(CONTAINER_RUNTIME) run --rm \
+		-v $(PWD)/config:/config:Z \
+		-v $(PWD)/keymap-drawer:/keymap-drawer:Z \
+		-v $(KEYMAP_DRAWER_VENV):/venv \
+		-w /work \
+		python:3-slim \
+		sh -c 'if [ ! -f /venv/bin/keymap ]; then \
+			rm -rf /venv/* && PYTHONUSERBASE=/venv pip install --user keymap-drawer; \
+		fi; \
+		export PYTHONPATH=$$(echo /venv/lib/python*/site-packages); \
+		for keymap in /config/*.keymap; do \
+			name=$$(basename "$$keymap" .keymap); \
+			echo "Generating keymap SVGs for $$name..."; \
+			/venv/bin/keymap -c /config/config_keymap-drawer.yaml parse -c 12 -z "$$keymap" > "/keymap-drawer/$$name.yaml" && \
+			/venv/bin/keymap -c /config/config_keymap-drawer.yaml draw "/keymap-drawer/$$name.yaml" > "/keymap-drawer/$$name.svg" || exit 1; \
+		done'
 
 ### CODEBASE_UROB START
 only_nice_corne_left_view_urob:

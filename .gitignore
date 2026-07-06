@@ -5,6 +5,9 @@ firmware/
 # west workspace
 .west/
 .zmk-workspace/
+
+# keymap-drawer venv cache
+.keymap-drawer-venv/
 modules/
 bootloader/
 tools/

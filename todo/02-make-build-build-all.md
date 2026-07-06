@@ -2,7 +2,7 @@
 
 # Add BUILD variable to control which firmware `make build` builds (default: nice_corne_left/right_oled), and add `make build_all` to build everything
 
-- [ ] Add BUILD variable with default firmware selection
+- [x] Add BUILD variable with default firmware selection
       Insert the following block right before the `ZMK_WORKSPACE :=` line (before the 'CI-aligned codebase target' comment block):
       
       ```makefile
@@ -13,7 +13,8 @@
       
       This uses `?=` so it can be overridden by env or command line (e.g. `make build BUILD="nice_settings_reset"`).
   - ⚙️ [x] Inserted `BUILD ?= nice_corne_left_oled nice_corne_right_oled` before the ZMK_WORKSPACE line. Uses `?=` for env/CLI override support.
-- [ ] Add filter logic in build target to skip non-BUILD artifacts
+    - 📋 BUILD variable at lines 187-189, positioned right before ZMK_WORKSPACE := as specified. Uses ?= for env/CLI override support. Default values (nice_corne_left_oled nice_corne_right_oled) match artifact-names in build.yaml. Comment explains usage clearly.
+- [x] Add filter logic in build target to skip non-BUILD artifacts
       In the `build:` target, two changes:
       
       1. Change the first shell line from:
@@ -35,7 +36,8 @@
       
       The double-escaping (`$$build_filter`, `$$artifact`) is required because these are shell variables inside a make recipe. The `case` pattern uses spaces around both the filter list and the artifact name to ensure exact word matching (e.g. `nice_corne_left` won't accidentally match `nice_corne_left_oled`).
   - ⚙️ [x] Changed build target: prepended `build_filter="$(BUILD)"` variable, added case-match filter block after artifact name normalization. Uses `" $$build_filter "` / `" $$artifact "` space-padded pattern for exact word matching.
-- [ ] Add build_all target
+    - 📋 Filter logic correctly implemented at lines 205 and 212-217. build_filter="$(BUILD)" set before the parsing loop. The case-match block uses space-padded strings (" $$build_filter " / " $$artifact ") for exact word matching, preventing partial matches (e.g. nice_corne_left won't match nice_corne_left_oled). Prints "Skipping $$artifact (not in BUILD)" and continues when filtered out. When BUILD is empty, [ -n "$$build_filter" ] is false and the filter block is skipped entirely.
+- [x] Add build_all target
       Insert the following block right before `### CODEBASE_UROB START`:
       
       ```makefile
@@ -46,7 +48,8 @@
       
       When BUILD is empty, `[ -n "$$build_filter" ]` is false, so the filter block is skipped entirely and everything in build.yaml gets built.
   - ⚙️ [x] Added `build_all:` target before `### CODEBASE_UROB START` that invokes `$(MAKE) build BUILD=""` to build everything with no filter.
-- [ ] Update help text descriptions for build and build_all
+    - 📋 build_all target at lines 244-246, positioned right before ### CODEBASE_UROB START. Uses $(MAKE) build BUILD="" to recursively invoke build with an empty filter, which bypasses the filter block entirely and builds everything in build.yaml. Correct pattern.
+- [x] Update help text descriptions for build and build_all
       In the `help:` target, update the 'Primary targets (CI-aligned):' section:
       
       1. Change the `build` description from:
@@ -57,3 +60,4 @@
       2. Add a new line after the `build` description:
          `@echo "  build_all      Build all firmware defined in build.yaml"`
   - ⚙️ [x] Updated build help line to mention BUILD variable and default. Added build_all help line.
+    - 📋 Help text updated at lines 38-39. Build description now reads "Build selected firmware (BUILD var, default: nice_corne_left/right_oled)" — accurately reflects the BUILD variable behavior. build_all line added: "Build all firmware defined in build.yaml". Both match the spec.

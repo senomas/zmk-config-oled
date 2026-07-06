@@ -1,5 +1,6 @@
 # zmk
 zmk/
+firmware/
 
 # west workspace
 .west/

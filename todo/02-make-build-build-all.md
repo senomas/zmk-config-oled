@@ -12,6 +12,7 @@
       ```
       
       This uses `?=` so it can be overridden by env or command line (e.g. `make build BUILD="nice_settings_reset"`).
+  - ⚙️ [x] Inserted `BUILD ?= nice_corne_left_oled nice_corne_right_oled` before the ZMK_WORKSPACE line. Uses `?=` for env/CLI override support.
 - [ ] Add filter logic in build target to skip non-BUILD artifacts
       In the `build:` target, two changes:
       
@@ -33,6 +34,7 @@
       ```
       
       The double-escaping (`$$build_filter`, `$$artifact`) is required because these are shell variables inside a make recipe. The `case` pattern uses spaces around both the filter list and the artifact name to ensure exact word matching (e.g. `nice_corne_left` won't accidentally match `nice_corne_left_oled`).
+  - ⚙️ [x] Changed build target: prepended `build_filter="$(BUILD)"` variable, added case-match filter block after artifact name normalization. Uses `" $$build_filter "` / `" $$artifact "` space-padded pattern for exact word matching.
 - [ ] Add build_all target
       Insert the following block right before `### CODEBASE_UROB START`:
       
@@ -43,6 +45,7 @@
       ```
       
       When BUILD is empty, `[ -n "$$build_filter" ]` is false, so the filter block is skipped entirely and everything in build.yaml gets built.
+  - ⚙️ [x] Added `build_all:` target before `### CODEBASE_UROB START` that invokes `$(MAKE) build BUILD=""` to build everything with no filter.
 - [ ] Update help text descriptions for build and build_all
       In the `help:` target, update the 'Primary targets (CI-aligned):' section:
       
@@ -53,3 +56,4 @@
       
       2. Add a new line after the `build` description:
          `@echo "  build_all      Build all firmware defined in build.yaml"`
+  - ⚙️ [x] Updated build help line to mention BUILD variable and default. Added build_all help line.

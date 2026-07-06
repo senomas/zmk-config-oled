@@ -38,7 +38,8 @@ help:
 	@echo "Usage: make [target]"
 	@echo ""
 	@echo "Primary targets (CI-aligned):"
-	@echo "  build          Build all firmware defined in build.yaml (what CI builds)"
+	@echo "  build          Build selected firmware (BUILD var, default: nice_corne_left/right_oled)"
+	@echo "  build_all      Build all firmware defined in build.yaml"
 	@echo "  codebase       Initialize west workspace from config/west.yml"
 	@echo ""
 	@echo "Flash targets:"
@@ -223,6 +224,10 @@ codebase_urob: clone_zmk_urob
 		west init -l /zmk/app/; \
 		west update'
 
+# Default firmware to build (space-separated artifact names from build.yaml).
+# Set to empty to build all, or list specific artifacts (e.g. nice_corne_left_oled).
+BUILD ?= nice_corne_left_oled nice_corne_right_oled
+
 # CI-aligned codebase target: uses config/west.yml to fetch ZMK at pinned version
 # Workspace cached on host at .zmk-workspace/ (in .gitignore)
 # config/ and boards/ are mounted inside /workspace so west.yml's 'self: path: config' resolves correctly
@@ -241,7 +246,8 @@ codebase:
 # Parses build.yaml on the host, then runs west build in Docker for each firmware
 build: codebase
 	mkdir -p firmware
-	@python3 scripts/parse-build-yaml.py | jq -c '.[]' | while IFS= read -r entry; do \
+	@build_filter="$(BUILD)"; \
+	python3 scripts/parse-build-yaml.py | jq -c '.[]' | while IFS= read -r entry; do \
 		board=$$(echo "$$entry" | jq -r '.board // empty'); \
 		shield=$$(echo "$$entry" | jq -r '.shield // empty'); \
 		cmake_args=$$(echo "$$entry" | jq -r '.["cmake-args"] // empty'); \
@@ -251,6 +257,12 @@ build: codebase
 			artifact="$${board}-$${shield}"; \
 		fi; \
 		artifact=$$(echo "$$artifact" | tr " " "_"); \
+		if [ -n "$$build_filter" ]; then \
+			case " $$build_filter " in \
+				*" $$artifact "*) ;; \
+				*) echo "Skipping $$artifact (not in BUILD)"; continue ;; \
+			esac; \
+		fi; \
 		snippet_flag=""; \
 		if [ -n "$$snippet" ]; then \
 			snippet_flag="-S $$snippet"; \
@@ -275,6 +287,10 @@ build: codebase
 				$$cmake_args && \
 			cp build/$$artifact/zephyr/zmk.uf2 /firmware/$$artifact.uf2" || exit 1; \
 	done
+
+# Build all firmware defined in build.yaml (no filter)
+build_all:
+	$(MAKE) build BUILD=""
 
 ### CODEBASE_UROB START
 only_nice_corne_left_view_urob:

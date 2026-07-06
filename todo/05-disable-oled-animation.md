@@ -2,7 +2,7 @@
 
 # Disable all animated widgets (Bongo Cat, peripheral cat) on OLED displays across all shields (corne, sofle, lily58, splitkb_aurora_sofle)
 
-- [ ] Disable Bongo Cat and peripheral animation in corne.conf
+- [x] Disable Bongo Cat and peripheral animation in corne.conf
       In config/corne.conf, in the ### OLED DISPLAY section (around line 102), add three lines right after the existing CONFIG_NICE_OLED_WIDGET_WPM_LUNA=n:
       
       CONFIG_NICE_OLED_WIDGET_WPM_BONGO_CAT=n
@@ -17,7 +17,8 @@
     - CONFIG_NICE_OLED_WIDGET_WPM_BONGO_CAT=n (disables animated bongo cat on central side)
     - CONFIG_NICE_OLED_WIDGET_WPM_NUMBER=y (replaces empty WPM area with plain number)
     - CONFIG_NICE_OLED_WIDGET_ANIMATION_PERIPHERAL=n (disables looping cat animation on peripheral side)
-- [ ] Disable Bongo Cat and peripheral animation in sofle.conf
+    - 📋 Verified: config/corne.conf lines 107-109 contain all three required configs after CONFIG_NICE_OLED_WIDGET_WPM_LUNA=n in the OLED DISPLAY section. WPM_BONGO_CAT=n, WPM_NUMBER=y, ANIMATION_PERIPHERAL=n — all present and correct.
+- [x] Disable Bongo Cat and peripheral animation in sofle.conf
       In config/sofle.conf, in the ### OLED DISPLAY section, add:
       
       CONFIG_NICE_OLED_WIDGET_WPM_BONGO_CAT=n
@@ -29,7 +30,8 @@
     - CONFIG_NICE_OLED_WIDGET_WPM_BONGO_CAT=n
     - CONFIG_NICE_OLED_WIDGET_WPM_NUMBER=y
     - CONFIG_NICE_OLED_WIDGET_ANIMATION_PERIPHERAL=n
-- [ ] Disable Bongo Cat and peripheral animation in lily58.conf
+    - 📋 Verified: config/sofle.conf lines 108-110 contain all three required configs in the OLED DISPLAY section. WPM_BONGO_CAT=n, WPM_NUMBER=y, ANIMATION_PERIPHERAL=n — all present and correct.
+- [x] Disable Bongo Cat and peripheral animation in lily58.conf
       In config/lily58.conf, in the ### OLED DISPLAY section, add:
       
       CONFIG_NICE_OLED_WIDGET_WPM_BONGO_CAT=n
@@ -41,7 +43,8 @@
     - CONFIG_NICE_OLED_WIDGET_WPM_BONGO_CAT=n
     - CONFIG_NICE_OLED_WIDGET_WPM_NUMBER=y
     - CONFIG_NICE_OLED_WIDGET_ANIMATION_PERIPHERAL=n
-- [ ] Disable Bongo Cat and peripheral animation in splitkb_aurora_sofle.conf
+    - 📋 Verified: config/lily58.conf lines 114-116 contain all three required configs in the OLED DISPLAY section. WPM_BONGO_CAT=n, WPM_NUMBER=y, ANIMATION_PERIPHERAL=n — all present and correct.
+- [x] Disable Bongo Cat and peripheral animation in splitkb_aurora_sofle.conf
       In config/splitkb_aurora_sofle.conf, in the ### OLED DISPLAY section, add:
       
       CONFIG_NICE_OLED_WIDGET_WPM_BONGO_CAT=n
@@ -53,3 +56,4 @@
     - CONFIG_NICE_OLED_WIDGET_WPM_BONGO_CAT=n
     - CONFIG_NICE_OLED_WIDGET_WPM_NUMBER=y
     - CONFIG_NICE_OLED_WIDGET_ANIMATION_PERIPHERAL=n
+    - 📋 Verified: config/splitkb_aurora_sofle.conf lines 108-110 contain all three required configs in the OLED DISPLAY section. WPM_BONGO_CAT=n, WPM_NUMBER=y, ANIMATION_PERIPHERAL=n — all present and correct.

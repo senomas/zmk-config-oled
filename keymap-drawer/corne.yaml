@@ -1,7 +1,7 @@
 layout: {zmk_keyboard: corne}
 layers:
   BAS:
-  - ESCAPE
+  - {t: ESCAPE, h: '$$mdi:apple-keyboard-option$$'}
   - Q
   - W
   - E
@@ -12,7 +12,7 @@ layers:
   - I
   - O
   - P
-  - BACKSPACE
+  - {t: BACKSPACE, h: '$$mdi:apple-keyboard-option$$'}
   - $$mdi:apple-keyboard-control$$
   - A
   - S
@@ -26,7 +26,7 @@ layers:
   - ;
   - {t: '''', h: '$$mdi:apple-keyboard-control$$'}
   - $$mdi:apple-keyboard-shift$$
-  - {t: Z, h: LEFT ALT}
+  - Z
   - X
   - C
   - V
@@ -35,7 +35,7 @@ layers:
   - M
   - ','
   - .
-  - {t: /, h: '$$mdi:apple-keyboard-option$$'}
+  - /
   - {t: ↹, h: RIGHT SHIFT}
   - {t: Esc, h: '$$mdi:apple-keyboard-command$$'}
   - {t: ↹, h: RAI}
@@ -95,9 +95,9 @@ layers:
   - '%'
   - ^
   - AMPS
-  - KP MULTIPLY
   - (
   - )
+  - KP MULTIPLY
   - $$mdi:backspace-outline$$
   - {t: ▽, type: trans}
   - F1
@@ -121,7 +121,7 @@ layers:
   - +
   - '{'
   - '}'
-  - {t: '|', h: RIGHT ALT}
+  - '|'
   - {t: '~', h: RIGHT SHIFT}
   - $$mdi:apple-keyboard-command$$
   - {type: held}

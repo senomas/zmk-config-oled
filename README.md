@@ -249,14 +249,21 @@ To compile with make, just run the following command:
 
 > [!IMPORTANT]
 >
-> 1. You have to have [docker](https://www.docker.com/products/docker-desktop/)
->    installed on your computer to use this command.
+> 1. Install [Docker Desktop](https://www.docker.com/products/docker-desktop/) or [Podman](https://podman.io/)
 > 2. Check the [makefile](./makefile) file for build options.
 
 
 ```bash
+make build    # builds everything in build.yaml — same as CI
+```
+
+### Advanced / Custom ZMK branch
+
+If you need to build with a custom ZMK fork (e.g. urob):
+
+```bash
 make codebase_urob # clones urob's zmk firmware and initializes it
-make corne_urob # compile all the *.uf2 of the corne and copy them to the firmware folder
+make corne_urob    # compile all the *.uf2 of the corne and copy them to the firmware folder
 ```
 
 # DISPLAY

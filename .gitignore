@@ -1,5 +1,6 @@
 /.pi-project.json
-.pi
+
+.pi/
 !.pi/config
 !.pi/trusted-script.json
 

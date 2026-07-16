@@ -1,3 +1,8 @@
+/.pi-project.json
+.pi
+!.pi/config
+!.pi/trusted-script.json
+
 # zmk
 zmk/
 firmware/
@@ -97,5 +102,3 @@ __pycache__
 # Rust
 target/
 **/*.rs.bk
-/.pi-project.json
-.pi

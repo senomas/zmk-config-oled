@@ -250,11 +250,11 @@ build: codebase keymap-drawer
 	mkdir -p firmware
 	@build_filter="$(BUILD)"; \
 	python3 scripts/parse-build-yaml.py | jq -c '.[]' | while IFS= read -r entry; do \
-		board=$$(echo "$$entry" | jq -r '.board // empty'); \
-		shield=$$(echo "$$entry" | jq -r '.shield // empty'); \
-		cmake_args=$$(echo "$$entry" | jq -r '.["cmake-args"] // empty'); \
-		artifact=$$(echo "$$entry" | jq -r '.["artifact-name"] // empty'); \
-		snippet=$$(echo "$$entry" | jq -r '.snippet // empty'); \
+		board=$$(printf '%s\n' "$$entry" | jq -r '.board // empty'); \
+		shield=$$(printf '%s\n' "$$entry" | jq -r '.shield // empty'); \
+		cmake_args=$$(printf '%s\n' "$$entry" | jq -r '.["cmake-args"] // empty'); \
+		artifact=$$(printf '%s\n' "$$entry" | jq -r '.["artifact-name"] // empty'); \
+		snippet=$$(printf '%s\n' "$$entry" | jq -r '.snippet // empty'); \
 		if [ -z "$$artifact" ]; then \
 			artifact="$${board}-$${shield}"; \
 		fi; \

@@ -1,7 +1,7 @@
 layout: {zmk_keyboard: corne}
 layers:
   BAS:
-  - - {t: ESCAPE, h: '$$mdi:apple-keyboard-option$$'}
+  - - {t: Esc, h: '$$mdi:apple-keyboard-option$$'}
     - Q
     - W
     - E
@@ -25,18 +25,7 @@ layers:
     - L
     - ;
     - {t: '''', h: '$$mdi:apple-keyboard-control$$'}
-  - - $$mdi:apple-keyboard-shift$$
-    - Z
-    - X
-    - C
-    - V
-    - B
-    - N
-    - M
-    - ','
-    - .
-    - /
-    - {t: ↹, h: RIGHT SHIFT}
+  - ['$$mdi:apple-keyboard-shift$$', Z, X, C, V, B, N, M, ',', ., /, RIGHT SHIFT]
   - - {t: ENTER, h: '$$mdi:apple-keyboard-command$$'}
     - {t: ↹, h: RAI}
     - {t: ␣, h: LOW}
@@ -87,7 +76,7 @@ layers:
     - {t: ▽, type: trans}
     - {t: ▽, type: trans}
   RAI:
-  - [↹, '!', '@', '#', $, '%', ^, AMPS, (, ), KP MULTIPLY, '$$mdi:backspace-outline$$']
+  - [⌦, '!', '@', '#', $, '%', ^, AMPS, (, ), KP MULTIPLY, '$$mdi:backspace-outline$$']
   - - {t: ▽, type: trans}
     - F1
     - F2

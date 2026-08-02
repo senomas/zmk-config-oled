@@ -305,7 +305,7 @@ keymap-drawer:
 		-v $(PWD)/keymap-drawer:/keymap-drawer:Z \
 		-v $(KEYMAP_DRAWER_VENV):/venv \
 		-v $(KEYMAP_DRAWER_CACHE):/root/.cache/keymap-drawer:Z \
-		-w /work \
+		-w / \
 		python:3-slim \
 		sh -c 'if [ ! -f /venv/bin/keymap ]; then \
 			rm -rf /venv/* && PYTHONUSERBASE=/venv pip install --user keymap-drawer; \

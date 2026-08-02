@@ -1,0 +1,17 @@
+{
+  "meta": {
+    "nn": 7,
+    "name": "fix-keymap-drawer-workdir",
+    "goal": "Fix broken keymap-drawer Makefile target (workdir /work does not exist in python:3-slim container)"
+  },
+  "tasks": [
+    {
+      "title": "Fix -w /work in keymap-drawer target",
+      "done": false,
+      "detail": "The keymap-drawer target in the Makefile passes `-w /work` to the python:3-slim container, but /work does not exist in that image and is not a mount point — podman fails with 'workdir \"/work\" does not exist on container' (Error 126). Regression introduced in commit cfca3c5d. Fix: change `-w /work` to `-w /` (root always exists; the script inside only uses absolute paths /config, /venv, /keymap-drawer, so the workdir is irrelevant to its logic). Verify by running `make keymap-drawer` and confirming SVGs are regenerated.",
+      "children": [],
+      "id": "2818e9fd"
+    }
+  ],
+  "version": "1.0"
+}

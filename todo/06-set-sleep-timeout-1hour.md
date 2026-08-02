@@ -2,7 +2,7 @@
 
 # Set CONFIG_ZMK_IDLE_SLEEP_TIMEOUT to 1 hour (3600000ms) across all board configs
 
-- [ ] Update IDLE_SLEEP_TIMEOUT in all board .conf files
+- [ ] Update IDLE_SLEEP_TIMEOUT in all board .conf files `(81802764)`
       In each of these files:
       - config/corne.conf
       - config/lily58.conf
@@ -16,3 +16,4 @@
       Also consider whether CONFIG_ZMK_IDLE_TIMEOUT should be set explicitly (currently commented out). If IDLE_TIMEOUT remains unset, ZMK defaults to 30 minutes — meaning the keyboard would go idle at 30 min and deep sleep 30 min later (1 hour total). If the intent is deep sleep after 1 hour of total inactivity regardless of idle, no IDLE_TIMEOUT change is needed. If the intent is idle earlier (e.g. 1-2 min), uncomment and set it too.
       
       Remove the alternate 30-minute variant line entirely rather than leaving commented-out cruft.
+  - ⚙️ [x] Replaced the commented-out CONFIG_ZMK_IDLE_SLEEP_TIMEOUT variants (900000 and 1800000) in config/corne.conf, config/lily58.conf, config/sofle.conf, config/splitkb_aurora_sofle.conf with a single active CONFIG_ZMK_IDLE_SLEEP_TIMEOUT=3600000 line (with a "# 1 hour (60*60*1000ms)" comment). Removed the stale "# 15 min" and "# 30 min" comments and the 30-minute variant entirely. Decision on CONFIG_ZMK_IDLE_TIMEOUT: left it commented/unset (default 30 min idle). With idle at 30 min + 1-hour sleep timeout, deep sleep happens 1 hour after inactivity begins, matching the goal of deep sleep after 1 hour of total inactivity — so no IDLE_TIMEOUT change is needed (as the task spec allows). `(c3b5de00)`

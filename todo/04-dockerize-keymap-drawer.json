@@ -9,35 +9,48 @@
       "title": "Rewrite keymap-drawer target to use docker run with pip install keymap-drawer",
       "done": true,
       "detail": "Replace the host pipx check with a docker run that installs keymap-drawer via pip inside the zmk-build-arm container, mounts config/ and keymap-drawer/ dirs, and processes all *.keymap files in a single run.",
-      "impl": [
+      "children": [
         {
           "implemented": true,
+          "id": "feba80f3",
           "note": "Done. Changes:\n- Added `.keymap-drawer-venv/` to `.gitignore`\n- Rewrote `keymap-drawer` target to use `python:3-slim` Docker image\n- Uses `PYTHONUSERBASE=/venv pip install --user` to install keymap-drawer into a host-cached directory (`.keymap-drawer-venv/`)\n- Sets `PYTHONPATH` so the `keymap` CLI can find its modules\n- Fixed `-c` flag placement: `-c config` goes before subcommand (`parse`/`draw`), `-c 12` (columns) goes after `parse`\n- Generates SVGs for all 4 keymaps (corne, lily58, sofle, splitkb_aurora_sofle)",
           "reviews": [
             {
               "text": "All implementation claims verified:\n- `.keymap-drawer-venv/` in `.gitignore` ✓\n- Uses python:3-slim Docker image (lighter than zmk-build-arm — sensible deviation from the \"zmk-build-arm container\" mentioned in the task, since keymap-drawer is a pure Python tool) ✓\n- Host-cached venv via PYTHONUSERBASE=/venv pip install --user ✓\n- PYTHONPATH set for module resolution ✓\n- Correct -c flag placement (config before subcommand, columns after parse) ✓\n- Processes all 4 keymaps: corne, lily58, sofle, splitkb_aurora_sofle ✓\n- No host pipx dependency ✓",
-              "gap": false
+              "gap": false,
+              "id": "d4c772d3",
+              "resolved": false,
+              "children": []
             }
-          ]
+          ],
+          "children": []
         }
-      ]
+      ],
+      "id": "583e504d"
     },
     {
       "title": "Verify keymap-drawer target works end-to-end",
       "done": true,
       "detail": "Run make keymap-drawer and confirm SVGs are generated without host pipx dependency.",
-      "impl": [
+      "children": [
         {
           "implemented": true,
+          "id": "acc8f2ff",
           "note": "`make build` ran successfully: codebase (west update), keymap-drawer (generated 4 SVGs from cached venv, no pip install needed), and both firmware targets (nice_corne_left_oled, nice_corne_right_oled) built to completion. No pipx dependency on host.",
           "reviews": [
             {
               "text": "End-to-end verification confirmed:\n- All 4 SVGs present in keymap-drawer/: corne.svg (42K), lily58.svg (40K), sofle.svg (42K), splitkb_aurora_sofle.svg (41K)\n- Intermediate YAML files also generated correctly\n- config_keymap-drawer.yaml exists (12K config)\n- .keymap-drawer-venv/ cached on host with bin/ and lib/\n- No host pipx required — everything runs inside python:3-slim container",
-              "gap": false
+              "gap": false,
+              "id": "59f2ab5e",
+              "resolved": false,
+              "children": []
             }
-          ]
+          ],
+          "children": []
         }
-      ]
+      ],
+      "id": "bebdec66"
     }
-  ]
+  ],
+  "version": "1.0"
 }

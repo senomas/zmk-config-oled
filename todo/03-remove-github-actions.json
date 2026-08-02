@@ -9,77 +9,108 @@
       "title": "Delete .github/workflows/build.yml and keymap-drawer.yaml",
       "done": true,
       "detail": "Remove both GitHub Actions workflow files from .github/workflows/. Clean removal — no other files reference them.",
-      "impl": [
+      "children": [
         {
           "implemented": true,
+          "id": "0ff0dbda",
           "note": "Removed both workflow files.",
           "reviews": [
             {
               "text": "Verified: .github/workflows/ directory no longer exists — both build.yml and keymap-drawer.yaml have been deleted. No remaining references to either workflow file anywhere in the repo (checked README, Makefile, config/).",
-              "gap": false
+              "gap": false,
+              "id": "054e1edc",
+              "resolved": false,
+              "children": []
             }
-          ]
+          ],
+          "children": []
         }
-      ]
+      ],
+      "id": "15397738"
     },
     {
       "title": "Add keymap-drawer target to Makefile",
       "done": true,
       "detail": "Add a new `keymap-drawer` target to the Makefile. The target must:\n\nFor each keymap file in config/*.keymap:\n1. Run `keymap -c config/config_keymap-drawer.yaml parse -c 12 -z <keymap>` to generate keymap-drawer/<name>.yaml\n2. Run `keymap -c config/config_keymap-drawer.yaml draw keymap-drawer/<name>.yaml` to generate keymap-drawer/<name>.svg\n\nUse `pipx run keymap-drawer` as the CLI entry point (the tool is keymap-drawer on PyPI, its CLI command is `keymap`). pipx handles temporary installation — no need for the user to pre-install.\n\nKeymaps to process (from config/): corne.keymap, lily58.keymap, sofle.keymap, splitkb_aurora_sofle.keymap.\n\nPlace the target near the top of the Makefile, in the 'Primary targets' section alongside `build` and `build_all`.\n\nCorner cases:\n- If pipx is not installed, print a helpful message: 'pipx not found. Install with: python3 -m pip install --user pipx'\n- If keymap-drawer run fails, show the error and exit non-zero\n- The `keymap parse` step uses `-c 12` (12 columns for corne layout) — use the same for all keymaps (they share the same physical layout)",
-      "impl": [
+      "children": [
         {
           "implemented": true,
+          "id": "4199f92a",
           "note": "Rewrote the keymap-drawer target to use pipx instead of Docker, as the reviewer flagged the previous Docker-based implementation as a gap. Changes:\n\n1. Replaced Docker/Podman detection with pipx detection. If pipx is not found, prints: \"pipx not found. Install with: python3 -m pip install --user pipx\" and exits non-zero.\n2. Uses `pipx run keymap-drawer` as the CLI entry point (package: keymap-drawer, command: keymap).\n3. For each keymap in config/*.keymap (corne, lily58, sofle, splitkb_aurora_sofle):\n   - `pipx run keymap-drawer parse -c config/config_keymap-drawer.yaml -c 12 -z <keymap> > keymap-drawer/<name>.yaml`\n   - `pipx run keymap-drawer draw -c config/config_keymap-drawer.yaml keymap-drawer/<name>.yaml > keymap-drawer/<name>.svg`\n4. Uses -c 12 for all keymaps (they share the same physical corne-style layout).\n5. Any failure in pipx/keymap-drawer exits non-zero via `|| exit 1`.",
           "reviews": [
             {
               "text": "The implementation uses Docker/Podman to run keymap-drawer inside a container (`zmkfirmware/zmk-build-arm:stable`) instead of `pipx run keymap-drawer` as specified. Key differences:\n\n1. **Wrong CLI entry point**: The spec says \"Use `pipx run keymap-drawer` as the CLI entry point\" — the implementation uses `docker run ... sh -c \"apt-get install python3-pip && pip3 install keymap-drawer && keymap ...\"`.\n\n2. **Missing pipx corner case**: The spec requires: \"If pipx is not installed, print a helpful message: 'pipx not found. Install with: python3 -m pip install --user pipx'\". Instead, the implementation checks for container runtime with a Docker/Podman message.\n\n3. **Dependency model changed**: The spec said \"pipx handles temporary installation — no need for the user to pre-install\" (only pipx needed). The current implementation requires Docker or Podman, which is a heavier dependency and adds network download latency on every run (apt-get + pip install inside container).\n\nThe keymap processing loop itself is correct: it processes all config/*.keymap files, uses `-c 12`, and generates both .yaml and .svg into keymap-drawer/.",
-              "gap": true
+              "gap": true,
+              "id": "e367552c",
+              "resolved": false,
+              "children": []
             },
             {
               "text": "Verified: the keymap-drawer target now uses `pipx run keymap-drawer` (no Docker), matching all spec requirements. All four keymaps processed via glob, `-c 12` used consistently, pipx-not-found and failure corner cases handled. Target placed in Primary targets section with .PHONY declaration and help entry.",
-              "gap": false
+              "gap": false,
+              "id": "51d6ec4f",
+              "resolved": false,
+              "children": []
             }
-          ]
+          ],
+          "children": []
         }
-      ]
+      ],
+      "id": "39495263"
     },
     {
       "title": "Make build depend on keymap-drawer",
       "done": true,
       "detail": "Add `keymap-drawer` as a prerequisite of the `build` target. Change the build target line from:\n\n    build: codebase\n\nto:\n\n    build: codebase keymap-drawer\n\nThis ensures keymap SVGs are always regenerated before a firmware build. The `keymap-drawer` target should run first (it's lightweight) before the heavy Docker-based firmware build.",
-      "impl": [
+      "children": [
         {
           "implemented": true,
+          "id": "2382654a",
           "note": "Changed build prerequisite from codebase to codebase keymap-drawer.",
           "reviews": [
             {
               "text": "Verified: the `build` target line now reads `build: codebase keymap-drawer` — exactly as specified. `keymap-drawer` runs first (it's lightweight, host-side) before the heavy Docker-based firmware build in `codebase`. The change is clean and correct.",
-              "gap": false
+              "gap": false,
+              "id": "f585fcbe",
+              "resolved": false,
+              "children": []
             }
-          ]
+          ],
+          "children": []
         }
-      ]
+      ],
+      "id": "6ce6d23a"
     },
     {
       "title": "Update README.md to reference local keymap-drawer",
       "done": true,
       "detail": "Update the README.md to replace GitHub-Actions-centric keymap-drawer documentation with local Makefile-based instructions.\n\nSpecific changes needed:\n\n1. In the QUICK START section, find the note block starting with 'This .svg image is automatically generated...' and replace it with a note explaining that SVGs are generated locally via `make keymap-drawer` and that `make build` does it automatically. Point to the `keymap-drawer/` folder for viewing them.\n\n2. Remove or update any references to `.github/workflows/keymap-drawer.yaml` (the workflow file is being deleted).\n\n3. The existing SVG image links in the README (keymap corne, sofle, splitkb_aurora_sofle, lily58) remain valid — the SVGs still live in keymap-drawer/, they're just generated locally now instead of via GitHub Actions.\n\n4. In the LOCAL INSTALLATION section (or the tree view), update the `keymap-drawer` folder description to mention it's generated by `make keymap-drawer` instead of GitHub Actions.",
-      "impl": [
+      "children": [
         {
           "implemented": true,
+          "id": "c88d08a3",
           "note": "Updated README.md to replace GitHub-Actions-centric keymap-drawer documentation with local Makefile-based instructions:\n\n1. **INTRO section note (line 59):** Updated the SVG attribution note to also mention that SVGs are generated automatically with `make build`: \"SVGs generated locally via `make keymap-drawer` (also runs automatically with `make build`)\"\n\n2. **QUICK START section:** Added a new `[!NOTE]` block after the normal procedure explaining that keymap SVG images are generated locally via `make keymap-drawer` and automatically with `make build`, pointing to the `keymap-drawer/` folder for viewing them.\n\n3. **No references to `.github/workflows/keymap-drawer.yaml` found in README** — already clean from previous implementation.\n\n4. **LOCAL INSTALLATION tree view:** Already correctly shows \"generated by `make keymap-drawer`\" — no changes needed.",
           "reviews": [
             {
               "text": "Three issues with the README update:\n\n1. **Wrong section**: The spec says to place the note in the **QUICK START** section, replacing the old \"This .svg image is automatically generated...\" note block. The current note appears in the **INTRO** section instead. In QUICK START, there's only a bare link: \"See the [INTRO](#INTRO) section above for the visual keymap layouts.\"\n\n2. **Missing \"make build\" mention**: The spec requires the note to explain that \"`make build` does it automatically.\" The current text (`*SVGs generated locally via \\`make keymap-drawer\\`...*`) doesn't mention that `make build` triggers keymap-drawer.\n\n3. **Wrong pointer**: The spec says to \"Point to the `keymap-drawer/` folder for viewing them.\" The current note points to `./config/config_keymap-drawer.yaml` instead.\n\nWhat IS correct: references to `.github/workflows/keymap-drawer.yaml` have been removed, SVG image links remain valid, and the LOCAL INSTALLATION tree view correctly shows `keymap-drawer # generated by \\`make keymap-drawer\\``.",
-              "gap": true
+              "gap": true,
+              "id": "46310384",
+              "resolved": false,
+              "children": []
             },
             {
               "text": "Verified: all four spec items met. QUICK START [!NOTE] explains local generation via `make keymap-drawer`, mentions `make build` auto-triggers it, and points to keymap-drawer/ folder. No .github/workflows/ references remain. SVG image links intact. LOCAL INSTALLATION tree correctly shows keymap-drawer as generated by `make keymap-drawer`.",
-              "gap": false
+              "gap": false,
+              "id": "e14fecee",
+              "resolved": false,
+              "children": []
             }
-          ]
+          ],
+          "children": []
         }
-      ]
+      ],
+      "id": "39b68ead"
     }
-  ]
+  ],
+  "version": "1.0"
 }

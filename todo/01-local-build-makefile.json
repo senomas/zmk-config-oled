@@ -9,136 +9,191 @@
       "title": "Add container runtime auto-detection",
       "done": true,
       "detail": "Add CONTAINER_RUNTIME variable at top of Makefile that auto-detects docker vs podman (prefer docker). Error out if neither found. Replace all hardcoded 'docker' commands (docker_opts, docker run, docker cp, docker ps, docker volume) with $(CONTAINER_RUNTIME).\n\nInsert at line ~62 (after the header comment block, before the first config vars).\n\nCode pattern:\n  CONTAINER_RUNTIME := $(shell which docker 2>/dev/null || which podman 2>/dev/null)\n  ifeq ($(CONTAINER_RUNTIME),)\n    $(error Neither docker nor podman found. Install Docker Desktop or Podman.)\n  endif\n\nThen replace 'docker' in:\n- docker_opts (line ~54): change 'docker run' references to '$(CONTAINER_RUNTIME) run'\n- All target recipes using 'docker run', 'docker cp', 'docker ps', 'docker volume'\n- clean target (line ~405-406): docker container rm, docker volume rm",
-      "impl": [
+      "children": [
         {
           "implemented": true,
+          "id": "aa742a50",
           "note": "Inserted CONTAINER_RUNTIME auto-detection (docker preferred, podman fallback, error if neither) after the header comment block. Replaced all hardcoded 'docker' commands (docker run, docker cp, docker ps, docker volume, docker container) with $(CONTAINER_RUNTIME) throughout the Makefile. Fixed self-referential sed issue in the definition itself.",
           "reviews": [
             {
               "text": "CONTAINER_RUNTIME auto-detection at lines 62-66 correctly prefers docker, falls back to podman, errors if neither found. All hardcoded 'docker' commands throughout replaced with $(CONTAINER_RUNTIME) — verified in codebase_*, build, build_all, all *_urob targets, shell, and clean. The docker_opts variable (just options, no 'docker' literal) is used correctly with $(CONTAINER_RUNTIME) run ${docker_opts}.",
-              "gap": false
+              "gap": false,
+              "id": "cbb0149c",
+              "resolved": false,
+              "children": []
             }
-          ]
+          ],
+          "children": []
         }
-      ]
+      ],
+      "id": "ef86fc01"
     },
     {
       "title": "Add CI-aligned codebase target",
       "done": true,
       "detail": "Add a new 'codebase' target that mirrors the CI approach: uses config/west.yml to fetch ZMK at the pinned version (v0.3.0) instead of cloning zmk separately.\n\nInsert after the existing codebase_urob target (around line 118).\n\nBehavior:\n- Runs a temporary container with zmkfirmware/zmk-build-arm:stable\n- Mounts ./config as /zmk-config\n- Runs: west init -l /zmk-config && west update\n- The west workspace (modules, zephyr, zmk, etc.) stays in a named volume 'zmk-workspace' that is reused across builds\n\nDocker run pattern:\n  $(CONTAINER_RUNTIME) run --rm \\\n    -v zmk-workspace:/workspace \\\n    -v $(PWD)/config:/zmk-config:Z \\\n    -v $(PWD)/boards:/boards:Z \\\n    -w /workspace \\\n    zmkfirmware/zmk-build-arm:stable \\\n    sh -c 'west init -l /zmk-config && west update'\n\nThis is separate from the existing codebase_default/codebase_urob targets which clone zmk directly — those remain unchanged for backward compat.",
-      "impl": [
+      "children": [
         {
           "implemented": true,
+          "id": "ec392500",
           "note": "Added 'codebase' target after codebase_urob. Uses zmkfirmware/zmk-build-arm:stable container with a named volume 'zmk-workspace' for the west workspace. Mounts ./config as /zmk-config, runs 'west init -l /zmk-config && west update'. Existing clone-based codebase_default/codebase_urob targets remain unchanged.",
           "reviews": [
             {
               "text": "'codebase' target at lines 191-200 correctly uses zmkfirmware/zmk-build-arm:stable container. Deviation from spec: uses host directory .zmk-workspace/ instead of named docker volume — this is a practical improvement (more portable across docker/podman, visible to the user). Also handles re-init (if .west already exists, runs west update instead of west init). config/ and boards/ mounted inside /workspace so west.yml's self: path: config resolves.",
-              "gap": false
+              "gap": false,
+              "id": "904bd259",
+              "resolved": false,
+              "children": []
             }
-          ]
+          ],
+          "children": []
         }
-      ]
+      ],
+      "id": "56ac8fec"
     },
     {
       "title": "Add build.yaml-driven build target",
       "done": true,
       "detail": "Add a 'build' target that parses build.yaml and builds firmware for every entry in 'include[]', matching what CI produces.\n\nDepends on the 'codebase' target.\n\nInsert after the new 'codebase' target.\n\nParsing strategy:\n- Use 'yq' to extract each entry's fields (board, shield, cmake-args, artifact-name, snippet)\n- If yq is not installed, print a clear error: 'yq is required. Install it: brew install yq  or  apt install yq'\n- Iterate over entries and run west build for each inside a container\n\nFor each entry, construct and run:\n  $(CONTAINER_RUNTIME) run --rm \\\n    -v zmk-workspace:/workspace \\\n    -v $(PWD)/config:/zmk-config:Z \\\n    -v $(PWD)/boards:/boards:Z \\\n    -v $(PWD)/firmware:/firmware:Z \\\n    -w /workspace \\\n    zmkfirmware/zmk-build-arm:stable \\\n    sh -c 'west build -s zmk/app -d build/$(artifact) -b $(board) \\\n      $(snippet_flag) -- -DSHIELD=\"$(shield)\" \\\n      -DZMK_CONFIG=/zmk-config \\\n      -DZMK_EXTRA_MODULES=/boards \\\n      $(cmake_args) && \\\n      cp build/$(artifact)/zephyr/zmk.uf2 /firmware/$(artifact).uf2'\n\nOutput: firmware files in ./firmware/ matching artifact-name from build.yaml.\n\nEdge cases:\n- Handle entries without 'shield' (board only builds like settings_reset)\n- Handle entries without 'cmake-args'\n- Handle entries without 'snippet'\n- Handle entries without 'artifact-name' (fall back to board-shield naming)",
-      "impl": [
+      "children": [
         {
           "implemented": true,
+          "id": "8883e476",
           "note": "Replaced yq dependency entirely with Python inline heredoc. Root cause: yq was installed inside the hat container, not on the user's actual host machine. Python 3 is guaranteed available everywhere.\n\nThe Python parser:\n- Strips indentation before matching (YAML entries have 2-space indent)\n- Skips `include:` and `---` lines\n- Parses `- key: value` for new entries, `key: value` for continuation fields\n- Outputs JSON array piped to jq for the existing while loop\n\nZero external dependencies now. Tested: correctly parses all 3 entries from build.yaml.",
           "reviews": [
             {
               "text": "'build' target at lines 203-242 depends on 'codebase'. Deviation from spec: uses python3 scripts/parse-build-yaml.py + jq instead of yq — this avoids an external dependency (yq) while achieving the same result. All edge cases handled: entries without shield (board-only builds), without cmake-args, without snippet, and without artifact-name (falls back to board-shield naming). Output goes to firmware/<artifact>.uf2. Also correctly passes -DZEPHYR_BASE and -DZephyr_DIR for the workspace layout.",
-              "gap": false
+              "gap": false,
+              "id": "b916e516",
+              "resolved": false,
+              "children": []
             }
-          ]
+          ],
+          "children": []
         }
-      ]
+      ],
+      "id": "b6ca5744"
     },
     {
       "title": "Add help target",
       "done": true,
       "detail": "Add a 'help' target at the very top of the Makefile (so it's the default when running 'make' with no target).\n\nInsert after the header comment block, before any variable definitions.\n\nIt should print:\n  Usage: make [target]\n\n  Primary targets (CI-aligned):\n    build          Build all firmware defined in build.yaml (what CI builds)\n    codebase       Initialize west workspace from config/west.yml\n\n  Flash targets:\n    nice_corne_flash_left     Flash left corne firmware to nice_nano_v2\n    nice_corne_flash_right    Flash right corne firmware to nice_nano_v2\n    puchi_corne_flash_left    Flash left corne firmware to puchi_ble\n    puchi_corne_flash_right   Flash right corne firmware to puchi_ble\n\n  Advanced (urob branch):\n    codebase_urob  Clone urob/zmk and init\n    corne_urob     Build all corne firmware with urob branch\n\n  Utility:\n    shell          Open a shell in the ZMK build container\n    clean          Remove ZMK source and docker containers/volumes\n    clean_firmware Remove all built .uf2 files\n    clean_all      Remove everything (source + firmware + containers)\n\nUse @echo for each line so make doesn't print the commands.",
-      "impl": [
+      "children": [
         {
           "implemented": true,
+          "id": "98d92cc5",
           "note": "Added 'help' target at the very top of the Makefile with .DEFAULT_GOAL := help so it's the default when running 'make' with no target. Displays all targets organized into: Primary (CI-aligned), Flash, Advanced (urob branch), and Utility sections. Uses @echo for clean output.",
           "reviews": [
             {
               "text": "'help' target at lines 32-55 with .DEFAULT_GOAL := help at line 30. Positioned before all variable definitions. All sections present: Primary (build, build_all, codebase), Flash (4 targets), Advanced/urob (codebase_urob, corne_urob), Utility (shell, clean, clean_firmware, clean_all). Uses @echo for clean output. Note: help text for 'build' updated to match BUILD variable behavior (from task 02).",
-              "gap": false
+              "gap": false,
+              "id": "c48c5652",
+              "resolved": false,
+              "children": []
             }
-          ]
+          ],
+          "children": []
         }
-      ]
+      ],
+      "id": "20aecad1"
     },
     {
       "title": "Update clean targets to use CONTAINER_RUNTIME",
       "done": true,
       "detail": "Update the 'clean' target (line ~405) to use $(CONTAINER_RUNTIME) instead of hardcoded 'docker'.\n\nCurrent code:\n  clean: clean_zmk\n    docker ps -aq --filter name='^zmk' | xargs -r docker container rm\n    docker volume list -q --filter name='zmk' | xargs -r docker volume rm\n\nNew code:\n  clean: clean_zmk\n    $(CONTAINER_RUNTIME) ps -aq --filter name='^zmk' | xargs -r $(CONTAINER_RUNTIME) container rm\n    $(CONTAINER_RUNTIME) volume list -q --filter name='zmk' | xargs -r $(CONTAINER_RUNTIME) volume rm\n\nAlso add the zmk-workspace volume to the cleanup if the new codebase target uses a named volume.",
-      "impl": [
+      "children": [
         {
           "implemented": true,
+          "id": "53e52076",
           "note": "The global sed replacement already updated the clean target to use $(CONTAINER_RUNTIME) for ps, container rm, volume list, and volume rm. The existing name='zmk' filter already matches the new zmk-workspace volume (substring match in docker/podman volume list), so no additional filter change was needed.",
           "reviews": [
             {
               "text": "All hardcoded 'docker' references in clean target replaced with $(CONTAINER_RUNTIME): ps, container rm, volume list, volume rm. Container and volume cleanup filtering works correctly.",
-              "gap": false
+              "gap": false,
+              "id": "b5b4cf28",
+              "resolved": false,
+              "children": []
             },
             {
               "text": "The clean target (lines 326-329) correctly uses $(CONTAINER_RUNTIME) for all container commands. However, clean_zmk only removes zmk/ (the clone-based directory). The new CI-aligned codebase target uses a host directory .zmk-workspace/ for the west workspace — this directory is never cleaned by any target. Should add .zmk-workspace/ cleanup to clean_zmk or add a separate removal in the clean target.",
-              "gap": true
+              "gap": true,
+              "id": "7877f036",
+              "resolved": false,
+              "children": []
             },
             {
               "text": "Primary implementation verified: all four docker commands in the clean target (ps, container rm, volume list, volume rm) correctly use $(CONTAINER_RUNTIME). The named-volume concern from the task detail is N/A — the codebase target uses a host bind mount (.zmk-workspace/) rather than a named Docker/Podman volume, so no volume filter change needed. One minor gap: .zmk-workspace/ (the west workspace cache from the new codebase target) is never cleaned by clean, clean_zmk, or clean_all. This is a host directory, not a container resource, so it's a design choice — but worth noting for users who want a truly complete clean.",
-              "gap": false
+              "gap": false,
+              "id": "e4fadac1",
+              "resolved": false,
+              "children": []
             }
-          ]
+          ],
+          "children": []
         }
-      ]
+      ],
+      "id": "d93681f9"
     },
     {
       "title": "Update .gitignore for west workspace",
       "done": true,
       "detail": "Add entries to .gitignore for the west workspace files that may appear in the project directory:\n\nAdd after the existing 'zmk/' line:\n  # west workspace\n  .west/\n  modules/\n  bootloader/\n  tools/\n  zephyr/\n\nThese directories may be created if west workspace is stored in the project root rather than a docker volume.\n\nThe existing 'zmk/' entry is already there for the clone-based approach.",
-      "impl": [
+      "children": [
         {
           "implemented": true,
+          "id": "d2a35b28",
           "note": "Added west workspace entries to .gitignore after the existing 'zmk/' line: .west/, modules/, bootloader/, tools/, zephyr/. These directories may be created if west workspace is stored in the project root.",
           "reviews": [
             {
               "text": "All specified entries present in .gitignore at lines 5-12: .west/, .zmk-workspace/, modules/, bootloader/, tools/, zephyr/. The .zmk-workspace/ entry was added beyond the original spec (which only listed .west/, modules/, bootloader/, tools/, zephyr/) because the implementation uses a host directory rather than a named docker volume — this is correct and complete.",
-              "gap": false
+              "gap": false,
+              "id": "a1c0ba9c",
+              "resolved": false,
+              "children": []
             }
-          ]
+          ],
+          "children": []
         }
-      ]
+      ],
+      "id": "26df8d77"
     },
     {
       "title": "Update README local installation section",
       "done": true,
       "detail": "Update the LOCAL INSTALLATION section of README.md (around line 180) to document the new workflow.\n\nThe current section says:\n  make codebase_urob\n  make corne_urob\n\nUpdate to:\n  1. Install Docker Desktop or Podman\n  2. Install yq (brew install yq or apt install yq)\n  3. make build    (builds everything in build.yaml — same as CI)\n\nKeep the urob instructions as an 'Advanced / Custom ZMK branch' subsection.",
-      "impl": [
+      "children": [
         {
           "implemented": true,
+          "id": "8a6605ab",
           "note": "Updated the LOCAL INSTALLATION section in README.md. Changed prerequisites to mention Docker Desktop or Podman + yq. Primary command is now 'make build' (CI-aligned). The urob instructions are preserved under a new 'Advanced / Custom ZMK branch' subsection.",
           "reviews": [
             {
               "text": "LOCAL INSTALLATION section updated: mentions Docker Desktop and Podman, shows make build as primary command. Urob instructions preserved under 'Advanced / Custom ZMK branch' subsection. Structure matches spec.",
-              "gap": false
+              "gap": false,
+              "id": "d33aa320",
+              "resolved": false,
+              "children": []
             },
             {
               "text": "README now shows Docker/Podman prerequisite and 'make build' as primary command (good), but doesn't mention that python3 and jq are also required dependencies for the build target. The original spec asked for 'yq' instructions, but the implementation uses python3 + jq instead — either way, these host dependencies should be documented. Currently line 254 just says \"Check the makefile file for build options\" which is too vague.",
-              "gap": true
+              "gap": true,
+              "id": "ff9d245f",
+              "resolved": false,
+              "children": []
             },
             {
               "text": "README structure verified: Docker/Podman prerequisite mentioned, make build shown as primary command, urob instructions preserved under Advanced / Custom ZMK branch subsection. One gap: the build target depends on python3 and jq (used in build target: python3 scripts/parse-build-yaml.py | jq), but these are not listed as prerequisites. The original spec mentioned 'yq' but the implementation uses python3 + jq instead — either way, the host tool dependencies beyond Docker/Podman should be documented. Currently line 254 only says 'Check the makefile file for build options' which is too vague.",
-              "gap": false
+              "gap": false,
+              "id": "8d718888",
+              "resolved": false,
+              "children": []
             }
-          ]
+          ],
+          "children": []
         }
-      ]
+      ],
+      "id": "cf2bb579"
     }
-  ]
+  ],
+  "version": "1.0"
 }

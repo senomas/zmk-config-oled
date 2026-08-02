@@ -9,7 +9,15 @@
       "title": "Fix -w /work in keymap-drawer target",
       "done": false,
       "detail": "The keymap-drawer target in the Makefile passes `-w /work` to the python:3-slim container, but /work does not exist in that image and is not a mount point — podman fails with 'workdir \"/work\" does not exist on container' (Error 126). Regression introduced in commit cfca3c5d. Fix: change `-w /work` to `-w /` (root always exists; the script inside only uses absolute paths /config, /venv, /keymap-drawer, so the workdir is irrelevant to its logic). Verify by running `make keymap-drawer` and confirming SVGs are regenerated.",
-      "children": [],
+      "children": [
+        {
+          "id": "246dded5",
+          "implemented": true,
+          "note": "Changed `-w /work` to `-w /` in the keymap-drawer target (Makefile). Verified: `make keymap-drawer` runs cleanly and regenerates SVGs/YAML for all 4 keymaps (corne, lily58, sofle, splitkb_aurora_sofle) with no retries — previously podman failed with 'workdir \"/work\" does not exist on container' (Error 126). Side effect observed: the podman run with `:Z` mount flags relabeled config/ and keymap-drawer/ to SELinux container_file_t:s0:c78,c774, which the git-hat sandbox container can no longer read (host user access unaffected — verified via host read). This is a pre-existing interaction between the Makefile's `:Z` flags and the sandbox; not caused by this fix. To reset contexts on host: sudo restorecon -R config keymap-drawer (or next make run relabels again).",
+          "reviews": [],
+          "children": []
+        }
+      ],
       "id": "2818e9fd"
     }
   ],

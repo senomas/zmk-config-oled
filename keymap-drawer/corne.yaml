@@ -29,8 +29,8 @@ layers:
   - - {t: ENTER, h: '$$mdi:apple-keyboard-command$$'}
     - {t: ↹, h: RAI}
     - {t: ␣, h: LOW}
-    - {t: ENTER, h: RAI}
-    - {t: ␣, h: LOW}
+    - {t: ␣, h: RAI}
+    - {t: ENTER, h: LOW}
     - {t: ESCAPE, h: '$$mdi:apple-keyboard-command$$'}
   LOW:
   - - {t: ▽, type: trans}
@@ -104,7 +104,7 @@ layers:
   - - $$mdi:apple-keyboard-command$$
     - {type: held}
     - {t: ␣, h: EXT}
-    - {t: ▽, type: trans}
+    - ␣
     - {t: EXT, h: toggle}
     - {t: ▽, type: trans}
   EXT:
